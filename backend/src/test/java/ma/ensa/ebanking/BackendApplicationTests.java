@@ -1,4 +1,4 @@
-package com.ensa.ecommerce_backend;
+package ma.ensa.ebanking;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
