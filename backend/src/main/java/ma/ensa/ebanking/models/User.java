@@ -22,9 +22,13 @@ public abstract class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String fullName;
+
     private String username;
 
     private String email;
+
+    private String phoneNumber;
 
     private String password;
 
