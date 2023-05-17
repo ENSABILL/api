@@ -1,18 +1,14 @@
 package ma.ensa.ebanking.models;
 
-
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import ma.ensa.ebanking.models.user.Client;
-
-import java.time.LocalDate;
+import ma.ensa.ebanking.enums.ServiceType;
 
 @Data
 @NoArgsConstructor
@@ -20,17 +16,17 @@ import java.time.LocalDate;
 @Builder
 
 @Entity
-public class CreditCard {
+public class Service {
 
-    @Id
-    private String cardNumber; // contains 16 digits
+    @Id @GeneratedValue
+    private long id;
 
-    private int cvv;
+    private String name;
 
-    private LocalDate expiryDate;
+    private ServiceType type;
 
     @ManyToOne
-    private Client client;
+    private Agency agency;
 
 
 }

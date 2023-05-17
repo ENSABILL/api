@@ -1,7 +1,7 @@
-package ma.ensa.ebanking.repository;
+package ma.ensa.ebanking.repositories;
 
 import jakarta.transaction.Transactional;
-import ma.ensa.ebanking.models.User;
+import ma.ensa.ebanking.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,8 +15,9 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
 
     boolean existsByUsername(String username);
-
     boolean existsByEmail(String email);
+    boolean existsByPhoneNumber(String phone);
+
 
     Optional<User> findByUsername(String username);
 

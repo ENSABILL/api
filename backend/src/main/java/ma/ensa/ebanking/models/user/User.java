@@ -1,10 +1,11 @@
-package ma.ensa.ebanking.models;
+package ma.ensa.ebanking.models.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,7 +14,9 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+//@Builder
+@SuperBuilder
+
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -24,6 +27,7 @@ public abstract class User implements UserDetails {
 
     private String fullName;
 
+    @Column(unique = true)
     private String username;
 
     private String email;

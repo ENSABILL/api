@@ -1,12 +1,13 @@
-package ma.ensa.ebanking.models;
+package ma.ensa.ebanking.models.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.ensa.ebanking.models.user.User;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
@@ -19,12 +20,16 @@ public class LoginToken {
     @ManyToOne
     private User user;
 
-    private LocalDateTime expireAt;
+    private Date expireAt;
+
+    private boolean verified;
 
     @Column(length = 8)
     private String verificationCode;
 
+    {verified = false;}
+
     public boolean expired(){
-        return expireAt.isAfter(LocalDateTime.now());
+        return expireAt.before(new Date());
     }
 }
