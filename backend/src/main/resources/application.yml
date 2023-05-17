@@ -1,5 +1,3 @@
-
-
 spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
@@ -10,3 +8,11 @@ spring:
         database: mysql
         hibernate:
             ddl-auto: update
+        database-platform: org.hibernate.dialect.MySQLDialect
+        open-in-view: false
+
+
+server:
+    port: 8081
+
+secret-key: 70655367566B5970347336763979244226452948404D635166546A576D5A7164

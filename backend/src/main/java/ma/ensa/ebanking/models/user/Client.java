@@ -1,12 +1,11 @@
-package ma.ensa.ebanking.models;
+package ma.ensa.ebanking.models.user;
 
 
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.ManyToOne;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import ma.ensa.ebanking.models.user.User;
 
 import java.time.LocalDate;
 
@@ -25,8 +24,11 @@ public class Client extends User {
 
     private String CIN;
 
-    private LocalDate dob;
+    private String dob;
 
     private String phoneNumber;
+
+    @ManyToOne
+    private Agent verifiedBy;
 
 }
