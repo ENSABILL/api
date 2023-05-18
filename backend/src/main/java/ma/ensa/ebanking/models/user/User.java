@@ -22,8 +22,8 @@ import java.util.Collection;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     private String fullName;
 

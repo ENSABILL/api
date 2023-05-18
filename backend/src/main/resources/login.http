@@ -12,6 +12,13 @@ POST http://localhost:8081/api/v1/auth/verify
 Content-Type: application/json
 
 {
-    "token": "12d95c0d-b1f3-40d9-b8dd-da6a90960ef1",
-    "code": "30451"
+    "token": "6da4589e-8929-43a4-b33f-7385350a4a5a",
+    "code": "84886"
 }
+
+
+### ANY
+POST http://
+Authorization: "Bearer nnljsdgukkdigsdyfyisfd"
+
+{}
