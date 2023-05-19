@@ -1,9 +1,6 @@
 package ma.ensa.ebanking.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,15 +15,21 @@ import ma.ensa.ebanking.enums.ServiceType;
 @Entity
 public class Service {
 
-    @Id @GeneratedValue
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     private String name;
 
     private ServiceType type;
 
+    private boolean active;
+
     @ManyToOne
     private Agency agency;
 
+    {
+        active = true;
+    }
 
 }
