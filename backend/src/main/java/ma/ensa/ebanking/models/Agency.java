@@ -23,6 +23,8 @@ public class Agency {
 
     private String patentId;
 
+    private String creditCardNumber;
+
     @OneToMany
     private List<Service> services;
 

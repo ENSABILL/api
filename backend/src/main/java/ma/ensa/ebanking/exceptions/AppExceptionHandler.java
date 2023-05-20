@@ -64,4 +64,10 @@ public class AppExceptionHandler {
     ){
         return ex.getMessage();
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(Exception.class)
+    public String handleOtherException(Exception ex){
+        return ex.getMessage();
+    }
 }

@@ -34,6 +34,8 @@ public class AuthService {
 
     private final TwilioOTPService twilioOTPService;
 
+
+
     public String sendVerificationCode(String username) throws Exception {
 
         Optional<User> user = userRepository.findByUsername(username);
@@ -63,7 +65,6 @@ public class AuthService {
                 .verificationCode(code)
                 .user(user.get())
                 .expireAt(expirationdDate)
-                .verified(false)
                 .build();
 
         token = tokenRepository.save(token);
@@ -71,39 +72,33 @@ public class AuthService {
         return token.getToken();
     }
 
-    public AuthResponse verifyCode(String tokenId, String code) throws Exception {
+    public void verifyCode(String tokenId, String code) throws Exception {
         Optional<LoginToken> tokenOptional =
                 tokenRepository.findById(tokenId);
 
         if(tokenOptional.isEmpty()){
-            throw new Exception();
+            throw new RecordNotFoundException("token not found");
         }
 
         LoginToken token = tokenOptional.get();
 
         if(token.expired()) {
             tokenRepository.deleteById(tokenId);
-            throw new Exception();
+            throw new Exception("the token is expired");
         }
 
         if(!token.getVerificationCode().equals(code)){
-            throw new Exception();
+            throw new Exception("the given code is wrong");
         }
+
 
         token.setVerified(true);
         tokenRepository.save(token);
-
-        User user = token.getUser();
-
-        return AuthResponse.builder()
-                .token(jwtService.generateToken(user))
-                .userType(user.getClass().getSimpleName())
-                .build();
     }
 
-    public void resetPassword(String token, String password) throws Exception{
+    public void resetPassword(ResetPasswordDto dto) throws Exception{
 
-        Optional<LoginToken> loginToken = tokenRepository.findById(token);
+        Optional<LoginToken> loginToken = tokenRepository.findById(dto.getToken());
 
         if(loginToken.isEmpty()){
             throw new Exception();
@@ -117,21 +112,21 @@ public class AuthService {
             //TODO: create an exception class and add it to AppExceptionHandler
         }
 
-        tokenRepository.deleteById(token);
+        tokenRepository.deleteById(dto.getToken());
 
         if(lt.expired()){
             throw new Exception();
             //TODO: create an exception class and add it to AppExceptionHandler
         }
 
-        final String encodedPassword = passwordEncoder.encode(password);
+        final String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
 
         // TODO : reset the password
         userRepository.resetPassword(lt.getUser().getPhoneNumber(), encodedPassword);
 
     }
 
-    public AuthResponse authenticate(AuthRequest request) throws Exception {
+    public AuthResponse authenticate(AuthRequest request){
 
         User user = (User) userService.loadUserByUsername(
                 request.getUsername()
@@ -143,10 +138,9 @@ public class AuthService {
                 )
         );
 
-        String token = sendVerificationCode(user.getUsername());
-
         return AuthResponse.builder()
-                .token(token)
+                .token(jwtService.generateToken(user))
+                .userType(user.getClass().getSimpleName())
                 .build();
     }
 

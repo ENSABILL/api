@@ -24,10 +24,11 @@ public class LoginToken {
 
     private boolean verified;
 
+
     @Column(length = 8)
     private String verificationCode;
 
-    {verified = false;}
+
 
     public boolean expired(){
         return expireAt.before(new Date());

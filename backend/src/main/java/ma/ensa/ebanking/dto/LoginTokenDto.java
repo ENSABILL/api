@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LoginTokenDto {
-    private String phoneNumber;//destination
+    private String phoneNumber;
     private String userName;
 }
