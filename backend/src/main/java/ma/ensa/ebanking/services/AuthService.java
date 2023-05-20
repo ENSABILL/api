@@ -32,7 +32,7 @@ public class AuthService {
     public final  AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-
+    private final TwilioOTPService twilioOTPService;
 
     public String sendVerificationCode(String username) throws Exception {
 
@@ -45,7 +45,12 @@ public class AuthService {
         String code = String.valueOf((int)(Math.random() * 100000));
 
         // TODO: send code via SMS or via Email
-
+        LoginTokenDTO dto = LoginTokenDTO.builder()
+                .username(username)
+                .phoneNumber(user.get().getPhoneNumber())
+                .otp(code)
+                .build();
+        twilioOTPService.sendOTP(dto);
 
         // TODO: endTodo
 

@@ -1,14 +1,14 @@
 {
     "properties": [
         {
-            "name": "secret-key",
+            "name": "jwt-secret-key",
             "type": "java.lang.String",
             "description": "Description for secret-key."
         },
         {
             "name": "twilio",
-            "type": "ma.ensa.ebanking.config.TwilioConfig",
-            "description": "Description for twilio."
+            "type": "ma.ensa.ebanking.config.TwilioConfig"
         }
+
     ]
 }
