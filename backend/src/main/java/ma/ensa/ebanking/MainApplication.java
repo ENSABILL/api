@@ -1,9 +1,7 @@
 package ma.ensa.ebanking;
 
-import com.twilio.Twilio;
-import jakarta.annotation.PostConstruct;
+
 import lombok.RequiredArgsConstructor;
-import ma.ensa.ebanking.config.TwilioConfig;
 import ma.ensa.ebanking.models.user.Admin;
 import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.UserRepository;
@@ -19,13 +17,6 @@ public class MainApplication implements CommandLineRunner {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
-
-    private final TwilioConfig twilioConfig;
-
-    @PostConstruct
-    public void initTwilio(){
-        Twilio.init(twilioConfig.getAccountSid(),twilioConfig.getAuthToken());
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);

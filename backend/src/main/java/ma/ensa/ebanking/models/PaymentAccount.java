@@ -21,6 +21,6 @@ public class PaymentAccount {
 
     private AccountLimit accountLimit;
 
-    @OneToOne(mappedBy = "client")
+    @OneToOne
     private Client client;
 }

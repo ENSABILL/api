@@ -3,8 +3,10 @@ package ma.ensa.ebanking.models.user;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import ma.ensa.ebanking.models.PaymentAccount;
 import ma.ensa.ebanking.models.user.User;
 
 import java.time.LocalDate;
@@ -30,5 +32,8 @@ public class Client extends User {
 
     @ManyToOne
     private Agent verifiedBy;
+
+    @OneToOne(mappedBy = "client")
+    private PaymentAccount account;
 
 }
