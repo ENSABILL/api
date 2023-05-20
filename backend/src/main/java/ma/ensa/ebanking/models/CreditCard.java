@@ -20,6 +20,7 @@ import java.time.LocalDate;
 @Builder
 
 @Entity
+@Deprecated
 public class CreditCard {
 
     @Id

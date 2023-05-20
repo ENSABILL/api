@@ -1,7 +1,7 @@
 spring:
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/test
+        url: jdbc:mysql://localhost:3306/test?createDatabaseIfNotExists=true
         username: root
         password: 12345678
     jpa:
@@ -16,3 +16,8 @@ server:
     port: 8081
 
 secret-key: 70655367566B5970347336763979244226452948404D635166546A576D5A7164
+
+twilio:
+    accountSid: AC77f981ba6ff303d2306dd2a644b8d654
+    authToken: 5a44654325e7305454132166fb23e0b4
+    trialNumber: +212704261627

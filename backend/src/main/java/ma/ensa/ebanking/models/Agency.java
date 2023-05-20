@@ -26,4 +26,11 @@ public class Agency {
     @OneToMany
     private List<Service> services;
 
+    public void showActiveServicesOnly(){
+        services = services
+                .stream()
+                .filter(Service::isActive)
+                .toList();
+    }
+
 }

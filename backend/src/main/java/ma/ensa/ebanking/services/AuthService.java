@@ -3,6 +3,7 @@ package ma.ensa.ebanking.services;
 import lombok.RequiredArgsConstructor;
 
 import ma.ensa.ebanking.config.JwtService;
+import ma.ensa.ebanking.dto.LoginTokenDto;
 import ma.ensa.ebanking.dto.auth.*;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
 import ma.ensa.ebanking.models.user.LoginToken;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.logging.Handler;
 
 
 @Service
@@ -30,6 +32,8 @@ public class AuthService {
     public final  AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
+    private final TwilioOTPService twilioOTPService;
+
 
     public String sendVerificationCode(String username) throws Exception {
 
@@ -38,10 +42,16 @@ public class AuthService {
             throw new RecordNotFoundException("user not found");
         }
 
+        // deprecated
         String code = String.valueOf((int)(Math.random() * 100000));
 
         // TODO: send code via SMS or via Email
-        // ..........
+        LoginTokenDto loginTokenDto = LoginTokenDto.builder()
+                .userName(username)
+                .phoneNumber(user.get().getPhoneNumber())
+                .build();
+        twilioOTPService.sendOTPForPasswordReset(loginTokenDto);
+
         // TODO: endTodo
 
         final long CURRENT_MILLIS = System.currentTimeMillis(),

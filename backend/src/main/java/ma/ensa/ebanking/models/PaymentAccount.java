@@ -1,10 +1,7 @@
 package ma.ensa.ebanking.models;
 
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import ma.ensa.ebanking.enums.AccountLimit;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +21,6 @@ public class PaymentAccount {
 
     private AccountLimit accountLimit;
 
-    @ManyToOne
+    @OneToOne(mappedBy = "client")
     private Client client;
 }
