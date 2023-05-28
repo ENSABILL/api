@@ -17,10 +17,11 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
 
     @Modifying
-    @Query("UPDATE Client c SET c.verifiedBy = :agent WHERE c.username = :username")
+    @Query("UPDATE Client c SET c.verifiedBy = :agent, c.password = :password, c.enabled = true WHERE c.username = :username")
     void setVerified(
             @Param("username") String username,
-            @Param("agent")    Agent agent
+            @Param("agent") Agent agent,
+            @Param("password") String generatedPassword
     );
 
     Optional<Client> findByUsername(String username);

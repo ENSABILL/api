@@ -18,24 +18,24 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public AuthResponse login(@RequestBody AuthRequest request) throws Exception{
+    public AuthResponse login(@RequestBody AuthRequest request) throws Exception {
         return service.authenticate(request);
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("/get-otp")
     @ResponseStatus(HttpStatus.CREATED)
-    public String resetPassword(@RequestBody String username) throws Exception{
-        return service.sendVerificationCode(username);
+    public String resetPassword() throws Exception {
+        return service.sendVerificationCode();
     }
 
-    @PutMapping("/reset-password")
+    @PostMapping("/reset-password")
     @ResponseStatus(HttpStatus.OK)
-    public String resetPassword(@RequestBody ResetPasswordDto dto) throws Exception{
+    public String resetPassword(@RequestBody ResetPasswordDto dto) throws Exception {
         service.resetPassword(dto);
         return "password reset successfully";
     }
 
-    @PostMapping("/verify")
+    @PostMapping("/verify-otp")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String verify(@RequestBody VerifyCodeDto dto) throws Exception {
         service.verifyCode(

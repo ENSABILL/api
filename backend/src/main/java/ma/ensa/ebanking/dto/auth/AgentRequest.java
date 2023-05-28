@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class AgentRequest {
 
-    private String fullName;
+    private String firstName;
+    private String lastName;
 
     private String username;
 

@@ -24,7 +24,7 @@ public class MainApplication implements CommandLineRunner {
     private final TwilioConfig twilioConfig;
 
     @PostConstruct
-    public void twilioInit(){
+    public void twilioInit() {
         Twilio.init(
                 twilioConfig.getAccountSid(),
                 twilioConfig.getAuthToken()
@@ -38,7 +38,7 @@ public class MainApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        if(
+        if (
                 userRepository.existsByUsername("badusername")
         ) return;
 
@@ -46,9 +46,13 @@ public class MainApplication implements CommandLineRunner {
                 passwordEncoder.encode("admin123");
 
         User admin = Admin.builder()
-                .fullName("bad admin")
                 .email("admin@badbank.com")
                 .password(encodedPassword)
+                .enabled(true)
+                .firstLogin(false)
+                .firstName("bad")
+                .lastName("admin")
+                .fullName("bad admin")
                 .username("badusername")
                 .phoneNumber("+212704261627")
                 .build();
