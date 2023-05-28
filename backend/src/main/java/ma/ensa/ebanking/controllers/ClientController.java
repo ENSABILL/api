@@ -41,7 +41,4 @@ public class ClientController {
         return null; // TODO: to complete
     }
 
-
-
-
 }
