@@ -35,8 +35,9 @@ public class AuthService {
 
 
 
-    public String sendVerificationCode(String username) throws Exception {
-
+    public String sendVerificationCode() throws Exception {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(username);
         Optional<User> user = userRepository.findByUsername(username);
         if(user.isEmpty()){
             throw new RecordNotFoundException("user not found");
@@ -99,7 +100,7 @@ public class AuthService {
                 );
 
         if(!loginToken.isVerified()){
-            throw new Exception("...");
+            throw new Exception("you are forbidden to reset your password. get an otp before resetting password.");
         }
 
         tokenRepository.deleteById(dto.getToken());
@@ -129,8 +130,16 @@ public class AuthService {
         );
 
         return AuthResponse.builder()
+                .id(user.getId())
                 .token(jwtService.generateToken(user))
                 .userType(user.getClass().getSimpleName())
+                .firstLogin(user.isFirstLogin())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .fullName(user.getFullName())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .build();
     }
 

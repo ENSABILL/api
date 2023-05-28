@@ -28,6 +28,8 @@ public abstract class User implements UserDetails {
     private String id;
 
     private String fullName;
+    private String firstName;
+    private String lastName;
 
     @Column(unique = true)
     private String username;
@@ -40,6 +42,9 @@ public abstract class User implements UserDetails {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    private boolean enabled = false;
+    private boolean firstLogin = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,6 +70,6 @@ public abstract class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

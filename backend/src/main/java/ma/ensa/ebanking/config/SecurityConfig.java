@@ -23,9 +23,14 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     private final AuthenticationProvider authenticationProvider;
+    static private final List<String> authorizedEndpoints = Arrays.asList(
+            "/api/v1/auth/**",
+            "/api/v1/client/**"
+    );
 
 
     @Bean
+
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
     {
 
@@ -46,6 +51,7 @@ public class SecurityConfig {
                             ).permitAll().anyRequest().authenticated();
                         }
                 )
+
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
