@@ -2,7 +2,6 @@ package ma.ensa.ebanking.config;
 
 
 import lombok.RequiredArgsConstructor;
-
 import ma.ensa.ebanking.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,10 @@
 package ma.ensa.ebanking.controllers;
 
 import lombok.RequiredArgsConstructor;
-import ma.ensa.ebanking.dto.auth.*;
+import ma.ensa.ebanking.dto.auth.AuthRequest;
+import ma.ensa.ebanking.dto.auth.AuthResponse;
+import ma.ensa.ebanking.dto.auth.ResetPasswordDto;
+import ma.ensa.ebanking.dto.auth.VerifyCodeDto;
 import ma.ensa.ebanking.services.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

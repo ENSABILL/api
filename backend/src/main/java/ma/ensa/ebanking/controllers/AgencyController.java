@@ -3,7 +3,6 @@ package ma.ensa.ebanking.controllers;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.AgencyDTO;
 import ma.ensa.ebanking.dto.ServiceDTO;
-import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.services.AgencyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +19,14 @@ public class AgencyController {
     // get all agencies
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Agency> getAllAgencies() throws Exception {
+    public List<AgencyDTO> getAllAgencies() throws Exception {
         return service.getAllAgencies();
     }
 
     // get agency given by imm
     @GetMapping("/{imm}")
     @ResponseStatus(HttpStatus.OK)
-    public Agency getAgency(@PathVariable String imm) throws Exception {
+    public AgencyDTO getAgency(@PathVariable String imm) throws Exception {
         return service.getAgency(imm);
     }
 
@@ -50,20 +49,12 @@ public class AgencyController {
         return String.format("service added successfully\nid: %s", sid);
     }
 
-    @PutMapping ("/service/{id}/disable")
-    public String disableService(
+    @PutMapping ("/service/{id}/toggle")
+    public String toggleService(
             @PathVariable String id
     ) throws Exception{
-        service.disableService(id);
+        service.toggleService(id);
         return "service disabled successfully";
-    }
-
-    @PutMapping ("/service/{id}/enable")
-    public String enableService(
-            @PathVariable String id
-    ) throws Exception{
-        service.enableService(id);
-        return "service enabled successfully";
     }
 
 }

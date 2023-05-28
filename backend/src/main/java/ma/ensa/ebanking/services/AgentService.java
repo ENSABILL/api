@@ -17,7 +17,7 @@ public class AgentService {
     public void createAgent(AgentRequest request) throws Exception{
 
         // check the auth
-        Auths.getAdmin();
+        AuthService.Auths.checkAdmin();
 
         // check the availability of username and email
         if(

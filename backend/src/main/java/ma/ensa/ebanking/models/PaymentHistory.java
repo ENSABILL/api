@@ -13,6 +13,7 @@ import ma.ensa.ebanking.models.user.Client;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+
 import static jakarta.persistence.GenerationType.UUID;
 
 @Data
