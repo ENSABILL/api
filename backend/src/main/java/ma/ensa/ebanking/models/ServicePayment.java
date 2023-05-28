@@ -1,10 +1,7 @@
 package ma.ensa.ebanking.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +19,7 @@ import static jakarta.persistence.GenerationType.UUID;
 @Builder
 
 @Entity
-public class PaymentHistory {
+public class ServicePayment {
 
     @Id
     @GeneratedValue(strategy = UUID)
@@ -35,6 +32,9 @@ public class PaymentHistory {
     private Service service;
 
     private double amount;
+
+    @Column(length = 1023)
+    private String data;
 
     @CreationTimestamp
     private LocalDateTime at;

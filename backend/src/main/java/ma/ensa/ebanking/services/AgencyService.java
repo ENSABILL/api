@@ -2,15 +2,18 @@ package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.AgencyDTO;
+import ma.ensa.ebanking.dto.PaymentServiceDto;
 import ma.ensa.ebanking.dto.ServiceDTO;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
 import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.Service;
+import ma.ensa.ebanking.models.ServicePayment;
 import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.AgencyRepository;
+import ma.ensa.ebanking.repositories.ServicePaymentRepository;
 import ma.ensa.ebanking.repositories.ServiceRepository;
 
 import java.util.List;
@@ -22,6 +25,8 @@ public class AgencyService {
     private final AgencyRepository agencyRepository;
 
     private final ServiceRepository serviceRepository;
+
+    private final ServicePaymentRepository servicePaymentRepository;
 
     // ------------ agency CRUD ------------
 
@@ -132,5 +137,31 @@ public class AgencyService {
     }
 
     // ------------ payment service CRUD ------------
+
+    public void payService(PaymentServiceDto dto) throws Exception {
+
+        Client client = AuthService.Auths.getClient();
+
+        Service service = serviceRepository
+                .findById(dto.getServiceId())
+                .orElseThrow(
+                        () -> new RecordNotFoundException("service not found")
+                );
+
+
+
+
+        ServicePayment servicePayment =
+                ServicePayment.builder()
+                        .service(service)
+                        .client(client)
+                        .amount(dto.getAmount())
+                        .data(dto.getData())
+                    .build();
+
+
+        servicePaymentRepository.save(servicePayment);
+
+    }
 
 }

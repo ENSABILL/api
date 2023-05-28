@@ -15,7 +15,7 @@ public class CreateAccountController {
     private final ClientService clientService;
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public String createAccount(@RequestBody ClientRequest dto) throws Exception {
         clientService.createClient(dto, false);
         return null;
