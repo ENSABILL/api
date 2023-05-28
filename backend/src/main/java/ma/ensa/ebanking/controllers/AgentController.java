@@ -18,9 +18,6 @@ public class AgentController {
     public String createAgent(@RequestBody AgentRequest request) throws Exception{
         service.createAgent(request);
         return "agent created successfully";
-
     }
-
-
 
 }

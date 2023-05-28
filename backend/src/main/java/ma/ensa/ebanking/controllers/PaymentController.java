@@ -25,6 +25,6 @@ public class PaymentController {
     @PutMapping("/feed")
     public String feed(@RequestBody TransferDto dto) throws Exception{
         service.feed(dto);
-        return "account feed by 0 USD";
+        return null;
     }
 }
