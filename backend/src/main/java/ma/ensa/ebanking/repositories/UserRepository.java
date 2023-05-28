@@ -16,15 +16,13 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-    boolean existsByPhoneNumber(String phone);
-
 
     Optional<User> findByUsername(String username);
 
     @Modifying
-    @Query("UPDATE User SET password = :password WHERE phoneNumber = :phone")
+    @Query("UPDATE User SET password = :password WHERE id = :id")
     void resetPassword(
-            @Param("phone")    String phone,
+            @Param("id")       String id,
             @Param("password") String password
     );
 

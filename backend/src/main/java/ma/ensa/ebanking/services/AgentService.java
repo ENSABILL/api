@@ -14,17 +14,16 @@ public class AgentService {
 
     private final UserRepository userRepository;
 
-    public void registerAgent(AgentRequest request) throws Exception{
+    public void createAgent(AgentRequest request) throws Exception{
 
         // check the auth
-        Auths.getAdmin();
+        AuthService.Auths.checkAdmin();
 
         // check the availability of username and email
-        if(!(
-                userRepository.existsByUsername(request.getUsername()) &&
-                userRepository.existsByEmail(request.getEmail()) &&
-                userRepository.existsByPhoneNumber(request.getPhoneNumber())
-        ))
+        if(
+                userRepository.existsByUsername(request.getUsername()) ||
+                userRepository.existsByEmail(request.getEmail())
+        )
             throw new EmailNotAvailableException();
 
 

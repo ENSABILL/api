@@ -17,7 +17,7 @@ public class CreateAccountController {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.OK)
     public String createAccount(@RequestBody ClientRequest dto) throws Exception {
-        clientService.registerClient(dto, false);
+        clientService.createClient(dto, false);
         return null;
     }
 
@@ -30,7 +30,7 @@ public class CreateAccountController {
 
     @PostMapping("/add-account")
     public String addAccount(@RequestBody ClientRequest dto) throws Exception {
-        clientService.registerClient(dto, true);
+        clientService.createClient(dto, true);
         return "account registered successfully";
     }
 

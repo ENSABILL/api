@@ -28,8 +28,9 @@ public class Service {
     @ManyToOne
     private Agency agency;
 
-    {
-        active = true;
+    @PrePersist
+    public void init(){
+        this.active = true;
     }
 
 }

@@ -14,7 +14,6 @@ import ma.ensa.ebanking.repositories.AgencyRepository;
 import ma.ensa.ebanking.repositories.ServiceRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class AgencyService {
     public void addAgency(AgencyDTO dto) throws Exception{
 
         // the admin is the only one who has this permission
-        Auths.getAdmin();
+        AuthService.Auths.checkAdmin();
 
         // check if the imm is not exist in the repo
         if(agencyRepository.existsById(dto.getImmId())){
@@ -46,32 +45,33 @@ public class AgencyService {
         agencyRepository.save(agency);
     }
 
-    public Agency getAgency(String imm) throws Exception{
+    public AgencyDTO getAgency(String imm) throws Exception{
         // check auth
-        User user = Auths.getUser();
+        User user = AuthService.Auths.getUser();
 
         if(user instanceof Agent){
             throw new PermissionException();
         }
 
-        Optional<Agency> agency = agencyRepository.findById(imm);
-
-        if(agency.isEmpty()){
-            throw new RecordNotFoundException("agency not found");
-        }
-
-        Agency agency1 = agency.get();
+        Agency agency = agencyRepository.findById(imm).orElseThrow(
+                () -> new RecordNotFoundException("agency not found")
+        );
 
         if(user instanceof Client){
-            agency1.showActiveServicesOnly();
+            agency.showActiveServicesOnly();
         }
 
-        return agency1;
+        return AgencyDTO.builder()
+                .immId(agency.getImm())
+                .name(agency.getName())
+                .patentId(agency.getPatentId())
+                .services(agency.getServices())
+                .build();
     }
 
-    public List<Agency> getAllAgencies() throws Exception{
+    public List<AgencyDTO> getAllAgencies() throws Exception{
         // check auth
-        User user = Auths.getUser();
+        User user = AuthService.Auths.getUser();
 
         if(user instanceof Agent){
             throw new PermissionException();
@@ -83,7 +83,16 @@ public class AgencyService {
             agencies.forEach(Agency::showActiveServicesOnly);
         }
 
-        return agencies;
+        return agencies
+            .stream()
+            .map(
+                a -> AgencyDTO.builder()
+                    .name(a.getName())
+                    .patentId(a.getPatentId())
+                    .immId(a.getImm())
+                    .services(a.getServices())
+                    .build()
+            ).toList();
     }
 
     // ------------ service CRUD ------------
@@ -91,43 +100,32 @@ public class AgencyService {
     public String addService(String imm, ServiceDTO dto) throws Exception{
 
         // check the permission
-        Auths.getAdmin();
+        AuthService.Auths.checkAdmin();
 
         // get the agency
-        Optional<Agency> agency = agencyRepository.findById(imm);
-        if(agency.isEmpty()){
-            throw new RecordNotFoundException("record not found");
-        }
+        Agency agency = agencyRepository.findById(imm)
+                .orElseThrow(
+                        () -> new RecordNotFoundException("record not found")
+                );
 
         // add the service
         final Service service = Service.builder()
-                .agency(agency.get())
+                .agency(agency)
                 .name(dto.getName())
                 .type(dto.getType())
                 .build();
+
         // return the new id
         return serviceRepository
                 .save(service)
                 .getId();
     }
 
-    public void disableService(String id) throws Exception{
-        // check the admin
-        Auths.getAdmin();
+    public void toggleService(String id) throws Exception{
 
-        // disable the service
-        if(!serviceRepository.disableService(id)){
-            throw new RecordNotFoundException("service not found");
-        }
+        AuthService.Auths.checkAdmin();
 
-    }
-
-    public void enableService(String id) throws Exception{
-
-        Auths.getAdmin();
-
-        // disable the service
-        if(!serviceRepository.enableService(id)){
+        if(!serviceRepository.toggleService(id)){
             throw new RecordNotFoundException("service not found");
         }
 

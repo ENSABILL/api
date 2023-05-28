@@ -1,6 +1,8 @@
 package ma.ensa.ebanking.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +24,8 @@ public class Agency {
     private String name;
 
     private String patentId;
+
+    private String creditCardNumber;
 
     @OneToMany
     private List<Service> services;

@@ -5,13 +5,13 @@ import ma.ensa.ebanking.dto.auth.ClientRequest;
 import ma.ensa.ebanking.exceptions.EmailNotAvailableException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
 import ma.ensa.ebanking.models.user.Agent;
-import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.models.user.Client;
+import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import static ma.ensa.ebanking.services.AuthService.Auths;
 
 @Service
 @RequiredArgsConstructor
@@ -19,20 +19,20 @@ public class ClientService {
 
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
+    private final PaymentService paymentService;
 
-    public void registerClient(ClientRequest request, boolean verify) throws Exception{
+    public void createClient(ClientRequest request, boolean verify) throws Exception{
 
         Agent agent = (verify) ? Auths.getAgent() : null;
 
         // check the availability of username and email
         if(!(
             userRepository.existsByUsername(request.getUsername()) &&
-            userRepository.existsByEmail(request.getEmail()) &&
-            userRepository.existsByPhoneNumber(request.getPhoneNumber())
+            userRepository.existsByEmail(request.getEmail())
         ))
             throw new EmailNotAvailableException();
 
-        User client = Client.builder()
+        Client client = Client.builder()
             .email(request.getEmail())
             .phoneNumber(request.getPhoneNumber())
             .CIN(request.getCIN())
@@ -43,19 +43,26 @@ public class ClientService {
             .build();
 
         userRepository.save(client);
+
+        if(verify){
+            paymentService.createAccount(client);
+        }
     }
 
     public void verifyAccount(String username) throws Exception{
 
+        // check permission
         Agent agent = Auths.getAgent();
 
-        Optional<Client> clientOptional = clientRepository.findByUsername(username);
-
-        if(clientOptional.isEmpty()){
-            throw new RecordNotFoundException("client not found");
-        }
-
+        // get the client
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(
+                        () -> new RecordNotFoundException("client not found")
+                );
+        // set verified
         clientRepository.setVerified(username, agent);
-
+        // create a payment account for the client
+        paymentService.createAccount((Client) user);
     }
 }

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.ensa.ebanking.models.user.User;
 
 import java.util.Date;
 
@@ -24,10 +23,11 @@ public class LoginToken {
 
     private boolean verified;
 
+
     @Column(length = 8)
     private String verificationCode;
 
-    {verified = false;}
+
 
     public boolean expired(){
         return expireAt.before(new Date());

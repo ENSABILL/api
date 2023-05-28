@@ -1,4 +1,4 @@
-package ma.ensa.ebanking.config;
+package ma.ensa.ebanking.services;
 
 
 import io.jsonwebtoken.Claims;
@@ -6,7 +6,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import ma.ensa.ebanking.config.JwtConfig;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +18,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${secret-key}")
-    private String SECRET_KEY;
-
+    private final JwtConfig jwt;
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(jwt.getSecretKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-    // parse token
 
     public Date extractExpiration(String jwt){
         return extractClaim(jwt, Claims::getExpiration);
@@ -66,27 +64,21 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ){
-        final long CURRENT_MILLIS = System.currentTimeMillis(),
-                MONTH_TO_MILLIS = 1000 * 60 * 60 * 24 * 30L;
-        final Date
-                currentDate = new Date(CURRENT_MILLIS),
-                expirationdDate = new Date(CURRENT_MILLIS + MONTH_TO_MILLIS );
+
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(currentDate)
-                .setExpiration(expirationdDate)
+                .setIssuedAt(new Date())
+                .setExpiration(jwt.getExperationDate())
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // verify the token
     public boolean isTokenValid(
             String jwt,
             UserDetails userDetails)
     {
-        // TODO: verify the signature
         final String username = extractUsername(jwt);
         return username.equals(userDetails.getUsername())
                 && !isTokenExpired(jwt);
@@ -94,10 +86,8 @@ public class JwtService {
 
 
     private boolean isTokenExpired(String token){
-        final Date currentDate = new Date(
-                System.currentTimeMillis()
-        );
-        return extractExpiration(token).before(currentDate);
+        return extractExpiration(token)
+                .before(new Date());
     }
 
 }

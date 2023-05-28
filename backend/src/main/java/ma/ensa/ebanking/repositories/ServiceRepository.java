@@ -13,11 +13,9 @@ public interface ServiceRepository
         extends JpaRepository<Service, String> {
 
     @Modifying
-    @Query("UPDATE Service s SET s.active = false WHERE s.id = :id")
-    boolean disableService(String id);
-
-    @Modifying
-    @Query("UPDATE Service s SET s.active = true WHERE s.id = :id")
-    boolean enableService(String id);
-
+    @Query(
+            value = "UPDATE Service SET active = NOT(active) WHERE id = :id",
+            nativeQuery = true
+    )
+    boolean toggleService(String id);
 }

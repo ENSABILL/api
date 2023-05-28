@@ -1,23 +1,24 @@
 package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
-
-import ma.ensa.ebanking.config.JwtService;
-import ma.ensa.ebanking.dto.LoginTokenDto;
-import ma.ensa.ebanking.dto.auth.*;
+import ma.ensa.ebanking.dto.auth.AuthRequest;
+import ma.ensa.ebanking.dto.auth.AuthResponse;
+import ma.ensa.ebanking.dto.auth.LoginTokenDTO;
+import ma.ensa.ebanking.dto.auth.ResetPasswordDto;
+import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
-import ma.ensa.ebanking.models.user.LoginToken;
-import ma.ensa.ebanking.models.user.User;
+import ma.ensa.ebanking.exceptions.UnauthenticatedException;
+import ma.ensa.ebanking.models.user.*;
 import ma.ensa.ebanking.repositories.TokenRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.logging.Handler;
 
 
 @Service
@@ -25,12 +26,12 @@ import java.util.logging.Handler;
 public class AuthService {
 
     private final UserRepository userRepository;
-
     private final TokenRepository tokenRepository;
     private final UserService userService;
     private final JwtService jwtService;
     public final  AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final TwilioOTPService twilioOTPService;
 
 
 
@@ -45,7 +46,12 @@ public class AuthService {
         String code = String.valueOf((int)(Math.random() * 100000));
 
         // TODO: send code via SMS or via Email
-
+        LoginTokenDTO dto = LoginTokenDTO.builder()
+                .username(username)
+                .phoneNumber(user.get().getPhoneNumber())
+                .otp(code)
+                .build();
+        twilioOTPService.sendOTP(dto);
 
         // TODO: endTodo
 
@@ -58,7 +64,6 @@ public class AuthService {
                 .verificationCode(code)
                 .user(user.get())
                 .expireAt(expirationdDate)
-                .verified(false)
                 .build();
 
         token = tokenRepository.save(token);
@@ -66,67 +71,52 @@ public class AuthService {
         return token.getToken();
     }
 
-    public AuthResponse verifyCode(String tokenId, String code) throws Exception {
-        Optional<LoginToken> tokenOptional =
-                tokenRepository.findById(tokenId);
+    public void verifyCode(String tokenId, String code) throws Exception {
 
-        if(tokenOptional.isEmpty()){
-            throw new Exception();
-        }
+        LoginToken loginToken =tokenRepository.findById(tokenId)
+                .orElseThrow(
+                        () -> new RecordNotFoundException("token not found")
+                );
 
-        LoginToken token = tokenOptional.get();
-
-        if(token.expired()) {
+        if(loginToken.expired()) {
             tokenRepository.deleteById(tokenId);
-            throw new Exception();
+            throw new Exception("the token is expired");
         }
 
-        if(!token.getVerificationCode().equals(code)){
-            throw new Exception();
+        if(!loginToken.getVerificationCode().equals(code)){
+            throw new Exception("the given code is wrong");
         }
 
-        token.setVerified(true);
-        tokenRepository.save(token);
-
-        User user = token.getUser();
-
-        return AuthResponse.builder()
-                .token(jwtService.generateToken(user))
-                .userType(user.getClass().getSimpleName())
-                .build();
+        loginToken.setVerified(true);
+        tokenRepository.save(loginToken);
     }
 
-    public void resetPassword(String token, String password) throws Exception{
+    public void resetPassword(ResetPasswordDto dto) throws Exception{
 
-        Optional<LoginToken> loginToken = tokenRepository.findById(token);
+        LoginToken loginToken = tokenRepository.findById(dto.getToken())
+                .orElseThrow(
+                        () -> new RecordNotFoundException("token not found")
+                );
 
-        if(loginToken.isEmpty()){
-            throw new Exception();
-            //TODO: create an exception class and add it to AppExceptionHandler
+        if(!loginToken.isVerified()){
+            throw new Exception("...");
         }
 
-        LoginToken lt = loginToken.get();
+        tokenRepository.deleteById(dto.getToken());
 
-        if(!lt.isVerified()){
-            throw new Exception();
-            //TODO: create an exception class and add it to AppExceptionHandler
+        if(loginToken.expired()){
+            throw new Exception("the token is expired");
         }
 
-        tokenRepository.deleteById(token);
-
-        if(lt.expired()){
-            throw new Exception();
-            //TODO: create an exception class and add it to AppExceptionHandler
-        }
-
-        final String encodedPassword = passwordEncoder.encode(password);
-
-        // TODO : reset the password
-        userRepository.resetPassword(lt.getUser().getPhoneNumber(), encodedPassword);
+        // reset the password
+        userRepository.resetPassword(
+                loginToken.getUser().getId(),
+                passwordEncoder.encode(dto.getNewPassword())
+        );
 
     }
 
-    public AuthResponse authenticate(AuthRequest request) throws Exception {
+    public AuthResponse authenticate(AuthRequest request){
 
         User user = (User) userService.loadUserByUsername(
                 request.getUsername()
@@ -138,11 +128,49 @@ public class AuthService {
                 )
         );
 
-        String token = sendVerificationCode(user.getUsername());
-
         return AuthResponse.builder()
-                .token(token)
+                .token(jwtService.generateToken(user))
+                .userType(user.getClass().getSimpleName())
                 .build();
     }
 
+    public static class Auths {
+
+        public static User getUser() throws UnauthenticatedException {
+
+            User user = (User) SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            if(user == null)
+                throw new UnauthenticatedException();
+
+            return user;
+        }
+
+        // Singleton
+        public static void checkAdmin() throws Exception{
+            if(getUser() instanceof Admin) return;
+            throw new PermissionException();
+        }
+
+        public static Agent getAgent() throws Exception{
+            try {
+                return (Agent) getUser();
+            }catch (ClassCastException e){
+                throw new PermissionException();
+            }
+        }
+
+        // TODO: for payment, transfer, ... etc
+        public static Client getClient() throws Exception{
+            try{
+                return (Client) getUser();
+            }catch (ClassCastException e){
+                throw new PermissionException();
+            }
+        }
+
+    }
 }
