@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByUsername(String username);
 
     @Modifying
-    @Query("UPDATE User SET password = :password WHERE id = :id")
+    @Query("UPDATE User u SET u.password = :password, u.firstLogin = false WHERE u.id = :id")
     void resetPassword(
             @Param("id")       String id,
             @Param("password") String password
