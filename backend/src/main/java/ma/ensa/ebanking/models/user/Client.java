@@ -20,15 +20,9 @@ import ma.ensa.ebanking.models.PaymentAccount;
 @Entity
 public class Client extends User {
 
-    private String firstName;
-
-    private String lastName;
-
     private String CIN;
 
     private String dob;
-
-    private String phoneNumber;
 
     @ManyToOne
     private Agent verifiedBy;
