@@ -28,20 +28,30 @@ public class SecurityConfig {
             "/api/v1/client/**"
     );
 
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+    {
+
+        final List<String> authorizedEndpoints = Arrays.asList(
+            "/api/v1/auth/**",
+            "/api/v1/client/signup"
+        );
+
         http
                 .csrf()
                 .disable()
-                .authorizeHttpRequests(authz -> {
-                    authz.requestMatchers(
+                .authorizeHttpRequests(
+                        authz -> {
+                            authz.requestMatchers(
                                     authorizedEndpoints.stream().map(
                                             AntPathRequestMatcher::new
                                     ).toList().toArray(AntPathRequestMatcher[]::new)
-                            )
-                            .permitAll()
-                            .anyRequest().authenticated();
-                })
+                            ).permitAll().anyRequest().authenticated();
+                        }
+                )
+
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

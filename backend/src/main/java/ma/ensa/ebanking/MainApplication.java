@@ -5,8 +5,10 @@ import com.twilio.Twilio;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.config.TwilioConfig;
+import ma.ensa.ebanking.models.CreditCard;
 import ma.ensa.ebanking.models.user.Admin;
 import ma.ensa.ebanking.models.user.User;
+import ma.ensa.ebanking.repositories.CreditCardRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -22,6 +24,8 @@ public class MainApplication implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
     private final TwilioConfig twilioConfig;
+
+    private final CreditCardRepository creditCardRepository;
 
     @PostConstruct
     public void twilioInit() {
@@ -58,6 +62,12 @@ public class MainApplication implements CommandLineRunner {
                 .build();
 
         userRepository.save(admin);
+
+        for(int i=0; i<100; i++){
+            creditCardRepository.save(
+                    CreditCard.builder().build()
+            );
+        }
 
     }
 }

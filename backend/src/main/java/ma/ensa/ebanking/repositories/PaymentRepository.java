@@ -21,7 +21,7 @@ public interface PaymentRepository extends JpaRepository<PaymentAccount, String>
     );
 
     @Modifying
-    @Query(value = "UPDATE PaymentAccount p SET p.balance = :amount WHERE p.id = :id")
+    @Query(value = "UPDATE PaymentAccount p SET p.balance = p.balance + :amount WHERE p.id = :id")
     void feedAccount(
             @Param("id") String id,
             @Param("amount") double amount

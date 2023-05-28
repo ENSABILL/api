@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/client")
 @RequiredArgsConstructor
-public class CreateAccountController {
+public class ClientController {
 
     private final ClientService clientService;
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public String createAccount(@RequestBody ClientRequest dto) throws Exception {
         clientService.createClient(dto, false);
         return null;
@@ -29,10 +29,19 @@ public class CreateAccountController {
     }
 
     @PostMapping("/add-account")
+    @ResponseStatus(HttpStatus.CREATED)
     public String addAccount(@RequestBody ClientRequest dto) throws Exception {
         clientService.createClient(dto, true);
         return "account registered successfully";
     }
+
+    @GetMapping
+    @ResponseStatus
+    public ClientDto getClient(@RequestBody ClientDto dto){
+        return null; // TODO: to complete
+    }
+
+
 
 
 }

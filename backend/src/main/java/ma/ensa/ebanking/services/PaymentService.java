@@ -5,16 +5,32 @@ import ma.ensa.ebanking.dto.TransferDto;
 import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.models.CreditCard;
 import ma.ensa.ebanking.models.PaymentAccount;
 import ma.ensa.ebanking.models.user.Client;
+import ma.ensa.ebanking.repositories.CreditCardRepository;
 import ma.ensa.ebanking.repositories.PaymentRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+
+    private final CreditCardRepository creditCardRepository;
+
+    private boolean checkExp(String eDto, LocalDate eEnt){
+
+        String[] arr = eDto.split("/");
+
+        return (
+                Integer.parseInt(arr[0]) == eEnt.getMonthValue()
+                && Integer.parseInt(arr[1]) + 2000 == eEnt.getYear()
+        );
+    }
 
     public void createAccount(Client client){
         PaymentAccount account = PaymentAccount
@@ -54,14 +70,33 @@ public class PaymentService {
             throw new PermissionException("you cannot pass the limit");
         }
 
-        // TODO: checking the credit card info and the balance (sending a HTTP request)
+        CreditCard creditCard =  creditCardRepository
+                .findById(dto.getCreditCardNumber())
+                .orElseThrow(
+                    () -> new RecordNotFoundException("credit card not found")
+                );
 
-        // TODO END
+        if(
+                creditCard.getCvv() != dto.getCvv()
+                && !checkExp(dto.getExp(), creditCard.getExpirationDate())
+        )
+            throw new RecordNotFoundException("credit card not found");
 
-        paymentRepository.feedAccount(
-                account.getId(),
+
+
+        if(creditCard.getAmount() < dto.getAmount()){
+            throw new Exception("insufficient amount");
+        }
+
+        creditCardRepository.descAmount(
+                dto.getCreditCardNumber(),
                 dto.getAmount()
         );
+
+        paymentRepository.feedAccount(
+                account.getId(), dto.getAmount()
+        );
+
 
     }
 

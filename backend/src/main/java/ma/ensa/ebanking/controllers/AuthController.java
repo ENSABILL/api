@@ -38,6 +38,7 @@ public class AuthController {
     @PostMapping("/verify-otp")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String verify(@RequestBody VerifyCodeDto dto) throws Exception {
+        // TODO: ... into DTO
         service.verifyCode(
                 dto.getToken(),
                 dto.getCode()

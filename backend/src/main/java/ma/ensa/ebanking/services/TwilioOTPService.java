@@ -17,8 +17,14 @@ public class TwilioOTPService {
 
     public void sendOTP(LoginTokenDTO dto){
 
+        String phoneNumber = dto.getPhoneNumber();
+
+        if(phoneNumber.startsWith("06")){
+            phoneNumber = "212" + phoneNumber.substring(3);
+        }
+
         PhoneNumber from = new PhoneNumber(config.getTrialPhoneNumber()),
-                    to = new PhoneNumber(dto.getPhoneNumber());
+                    to = new PhoneNumber(phoneNumber);
 
         String body = String.format(" dear %s, the OTP is : %s ",
             dto.getUsername(),

@@ -19,7 +19,6 @@ jwt:
     secret-key: 70655367566B5970347336763979244226452948404D635166546A576D5A7164
     duration: 60
 
-
 twilio:
     account-sid: AC2e6a7c5d18e16fead92005b1369f3e58
     auth-token: ea2cfae727861197da12a38aa917d61e

@@ -31,9 +31,10 @@ public class ClientService {
         Agent agent = (verify) ? Auths.getAgent() : null;
 
         // check the availability of username and email
-        if (
-                userRepository.existsByUsername(request.getUsername()) ||
-                        userRepository.existsByEmail(request.getEmail())
+        if(
+            userRepository.existsByUsername(request.getUsername()) &&
+            userRepository.existsByEmail(request.getEmail())
+
         )
             throw new EmailNotAvailableException();
 
