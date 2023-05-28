@@ -1,0 +1,229 @@
+{
+	"info": {
+		"_postman_id": "0e6fdcc9-9ab3-471d-a8b1-a6474cc10541",
+		"name": "agent",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20859692"
+	},
+	"item": [
+		{
+			"name": "accept client",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMyIsImlhdCI6MTY4NTMwMDk1NywiZXhwIjoxNjg1MzA0NTU3fQ.hTJSpssixxAM6h_ovtbbJXdc5HLlLmix3wS7p9_405Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/client/client2/verify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"client",
+						"client2",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create client",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMyIsImlhdCI6MTY4NTMwMDk1NywiZXhwIjoxNjg1MzA0NTU3fQ.hTJSpssixxAM6h_ovtbbJXdc5HLlLmix3wS7p9_405Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"client1@gmail.com\",\r\n    \"dob\": \"2001/28/09\",\r\n    \"cin\": \"e11221\",\r\n    \"firstName\": \"client\",\r\n    \"lastName\": \"1\",\r\n    \"phoneNumber\": \"212612218950\",\r\n    \"username\": \"client1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/client/add-account",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"client",
+						"add-account"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "agent login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"agent123\",\r\n    \"password\": \"newpass\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reset agent password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMyIsImlhdCI6MTY4NTMwMDg5OSwiZXhwIjoxNjg1MzA0NDk5fQ.HcAWcTfpKQJs03qNMpwpWXocH3a0E3Jxy3ZVOy9hvus",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"newPassword\": \"newpass\",\r\n    \"token\": \"0e0ecfa9-6306-453f-9c0a-13c290bc99eb\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/reset-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"reset-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get otp",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMyIsImlhdCI6MTY4NTI5OTQxOSwiZXhwIjoxNjg1MzAzMDE5fQ.UkQtbEpupYqGLw4xVS7N3hNFu5sejvAFXOKNlludelU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/get-otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"get-otp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify otp",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMyIsImlhdCI6MTY4NTI5ODUzMSwiZXhwIjoxNjg1MzAyMTMxfQ.kUg7W3rYfr0wv7cqKCYjPcByj2ZtvQFHmnRYCnQeh-4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"code\": \"63681\",\r\n    \"token\": \"0e0ecfa9-6306-453f-9c0a-13c290bc99eb\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/auth/verify-otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"verify-otp"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
