@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # mysql
+  mysql:
+    image: mysql
+    volumes:
+      - db_data_ensabill:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ensabill_db
+
+  # springboot 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    image: redahimmi/ensabill:latest
+    ports:
+      - "80:8080"
+      - "443:8080"
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=ensabill_db
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_PORT=3306
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+
+volumes:
+  db_data_ensabill:
