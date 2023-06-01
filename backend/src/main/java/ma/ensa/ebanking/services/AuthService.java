@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.Random;
 
 
 @Service
@@ -44,7 +45,8 @@ public class AuthService {
         }
 
         // deprecated
-        String code = String.valueOf((int)(Math.random() * 100000));
+        Random random = new Random();
+        String code = String.valueOf(random.nextInt(9000) + 1000);
 
         // TODO: send code via SMS or via Email
         LoginTokenDTO dto = LoginTokenDTO.builder()
