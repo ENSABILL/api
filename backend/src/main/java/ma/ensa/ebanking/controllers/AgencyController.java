@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/agency")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AgencyController {
 
     private final AgencyService service;
