@@ -1,5 +1,6 @@
 package ma.ensa.ebanking.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class PaymentAccount {
     private AccountLimit accountLimit;
 
     @OneToOne
+    @JsonIgnore
     private Client client;
 
     @PrePersist

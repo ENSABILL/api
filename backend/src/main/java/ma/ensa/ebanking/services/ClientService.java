@@ -1,6 +1,7 @@
 package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
+import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.InitialPasswordDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
 import ma.ensa.ebanking.exceptions.EmailNotAvailableException;
@@ -11,8 +12,11 @@ import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import ma.ensa.ebanking.utils.PasswordUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import static ma.ensa.ebanking.services.AuthService.Auths;
 
@@ -41,11 +45,9 @@ public class ClientService {
         Client client = Client.builder()
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
-                .CIN(request.getCIN())
+                .CIN(request.getCin())
                 .dob(request.getDob())
                 .enabled(verify)
-                .firstLogin(true)
-                .fullName(request.getFirstName() + " " + request.getLastName())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .username(request.getUsername())
@@ -94,6 +96,18 @@ public class ClientService {
         twilioOTPService.sendInitialPassword(dto);
         // create a payment account for the client
         paymentService.createAccount((Client) user);
+    }
+
+    public ClientDto getClient(String username) throws Exception{
+
+        Optional<Client> clientOpt =
+                clientRepository.findByUsername(username);
+
+        Client client = clientOpt.isPresent() ? clientOpt.get() : Auths.getClient();
+
+        ClientDto clientDto = new ClientDto();
+        BeanUtils.copyProperties(client, clientDto);
+        return clientDto;
     }
 
 }

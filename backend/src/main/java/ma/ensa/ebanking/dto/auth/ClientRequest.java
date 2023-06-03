@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class ClientRequest extends AgentRequest{
 
-    private String CIN;
+    private String cin;
 
     private String dob;
 
