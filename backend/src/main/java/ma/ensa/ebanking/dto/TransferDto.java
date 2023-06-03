@@ -14,6 +14,8 @@ public class TransferDto  {
 
     private String exp;
 
+    private String username;
+
     private double amount;
 
 

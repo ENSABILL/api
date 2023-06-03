@@ -2,6 +2,7 @@ package ma.ensa.ebanking.controllers;
 
 
 import lombok.RequiredArgsConstructor;
+import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
 import ma.ensa.ebanking.services.ClientService;
 import org.springframework.http.HttpStatus;
@@ -37,9 +38,10 @@ public class ClientController {
     }
 
     @GetMapping
-    @ResponseStatus
-    public ClientDto getClient(@RequestBody ClientDto dto){
-        return null; // TODO: to complete
+    @ResponseStatus(HttpStatus.OK)
+    public ClientDto getClient(@RequestBody ClientDto dto) throws Exception{
+        return clientService
+                .getClient(dto.getUsername());
     }
 
 }

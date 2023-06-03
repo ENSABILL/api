@@ -43,8 +43,16 @@ public abstract class User implements UserDetails {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    private boolean enabled = false;
-    private boolean firstLogin = true;
+    private boolean enabled;
+    private boolean firstLogin;
+
+
+    @PrePersist
+    public void init(){
+        firstLogin = true;
+        enabled = false;
+        fullName = firstName + " " + lastName; " ".stripTrailing()
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

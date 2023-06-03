@@ -24,8 +24,17 @@ public class PaymentController {
     }
 
     @PutMapping("/feed")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public String feed(@RequestBody TransferDto dto) throws Exception{
         service.feed(dto);
         return null;
     }
+
+    @PostMapping("/transfer")
+    @ResponseStatus(HttpStatus.OK)
+    public String transfer(@RequestBody TransferInternalDto dto) throws Exception{
+        service.transfer(dto);
+        return null;
+    }
+
 }
