@@ -29,6 +29,8 @@ public class Agency {
 
     private String creditCardNumber;
 
+    private String image;
+
     @OneToMany(mappedBy = "agency")
     private List<Service> services;
 
