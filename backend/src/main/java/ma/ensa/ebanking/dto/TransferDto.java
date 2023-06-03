@@ -16,5 +16,4 @@ public class TransferDto  {
 
     private double amount;
 
-
 }

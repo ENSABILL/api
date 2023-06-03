@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.ensa.ebanking.models.user.Agent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,8 +29,11 @@ public class Agency {
 
     private String creditCardNumber;
 
-    @OneToMany
+    @OneToMany(mappedBy = "agency")
     private List<Service> services;
+
+    @OneToMany(mappedBy = "agency")
+    private List<Agent> agents = new ArrayList<>();
 
     public void showActiveServicesOnly(){
         services = services

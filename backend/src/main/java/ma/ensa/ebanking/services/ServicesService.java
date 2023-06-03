@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,7 +39,7 @@ public class ServicesService {
         Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         ma.ensa.ebanking.models.Service service = serviceRepository.findById(donationRequest.getServiceId()).orElseThrow(()->new RuntimeException("Service not found"));
 
-        //TODO Verify Balance
+        //TODO Payment
 
         Operation operation = Operation.builder()
                 .service(service)
@@ -56,7 +57,7 @@ public class ServicesService {
         Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         ma.ensa.ebanking.models.Service service = serviceRepository.findById(rechargeRequest.getServiceId()).orElseThrow(()->new RuntimeException("Service not found"));
 
-        //TODO Verify Balance
+        //TODO Payment
 
         Operation operation = Operation.builder()
                 .service(service)
@@ -79,16 +80,26 @@ public class ServicesService {
                 .build();
     return OperationMapper.mapOperation(operationRepository.save(operation));
     }
+
+    //put mapping
     OperationDto payBill(PayBillRequest payBillRequest){
-        return null;
+        Operation operation = operationRepository.findById(payBillRequest.getOperationId()).orElseThrow();
+        //TODO Payment
+        return OperationMapper.mapOperation(operationRepository.save(operation));
     }
 
     List<OperationDto> getClientUnpaidBills(){
-        return null;
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        return client.getOperations().stream().filter(operation -> operation.getFactureStatus().equals(FactureStatus.UNPAID)).map(OperationMapper::mapOperation).collect(Collectors.toList());
     }
 
     List<OperationDto> getClientPaidBills(){
-        return null;
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        return client.getOperations().stream().filter(operation -> operation.getFactureStatus().equals(FactureStatus.PAID)).map(OperationMapper::mapOperation).collect(Collectors.toList());
     }
+
+    //by category
 
 }
