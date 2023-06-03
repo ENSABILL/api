@@ -1,6 +1,7 @@
 package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
+import ma.ensa.ebanking.controllers.TransferInternalDto;
 import ma.ensa.ebanking.dto.TransferDto;
 import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.exceptions.PermissionException;
@@ -8,8 +9,10 @@ import ma.ensa.ebanking.exceptions.RecordNotFoundException;
 import ma.ensa.ebanking.models.CreditCard;
 import ma.ensa.ebanking.models.PaymentAccount;
 import ma.ensa.ebanking.models.user.Client;
+import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.CreditCardRepository;
 import ma.ensa.ebanking.repositories.PaymentRepository;
+import ma.ensa.ebanking.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +24,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     private final CreditCardRepository creditCardRepository;
+
+    private final ClientRepository clientRepository;
 
     private boolean checkExp(String eDto, LocalDate eEnt){
 
@@ -100,5 +105,28 @@ public class PaymentService {
 
     }
 
+    public void transfer(TransferInternalDto dto) throws Exception{
 
+        Client client = AuthService.Auths.getClient();
+
+        PaymentAccount account = client.getAccount();
+
+        if(account.getBalance() < dto.getAmount()){
+            throw new Exception("insufficient balance");
+        }
+
+        PaymentAccount distAccount = clientRepository
+                .findByUsername(dto.getUsername())
+                .orElseThrow(
+                        () -> new RecordNotFoundException("client not found")
+                ).getAccount();
+
+        paymentRepository.feedAccount(
+            account.getId(), -dto.getAmount()
+        );
+
+        paymentRepository.feedAccount(
+                distAccount.getId(), dto.getAmount()
+        );
+    }
 }

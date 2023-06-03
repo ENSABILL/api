@@ -16,6 +16,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static ma.ensa.ebanking.services.AuthService.Auths;
 
 @Service
@@ -43,11 +45,9 @@ public class ClientService {
         Client client = Client.builder()
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
-                .CIN(request.getCIN())
+                .CIN(request.getCin())
                 .dob(request.getDob())
                 .enabled(verify)
-                .firstLogin(true)
-                .fullName(request.getFirstName() + " " + request.getLastName())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .username(request.getUsername())
@@ -100,11 +100,10 @@ public class ClientService {
 
     public ClientDto getClient(String username) throws Exception{
 
-        Client client = clientRepository
-                .findByUsername(username)
-                .orElseThrow(
-                        () -> new RecordNotFoundException("client not found")
-                );
+        Optional<Client> clientOpt =
+                clientRepository.findByUsername(username);
+
+        Client client = clientOpt.isPresent() ? clientOpt.get() : Auths.getClient();
 
         ClientDto clientDto = new ClientDto();
         BeanUtils.copyProperties(client, clientDto);

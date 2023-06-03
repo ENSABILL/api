@@ -39,7 +39,8 @@ public class ClientController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ClientDto getClient(@RequestBody ClientDto dto) throws Exception{
-        return clientService.getClient(dto.getUsername());
+        return clientService
+                .getClient(dto.getUsername());
     }
 
 }

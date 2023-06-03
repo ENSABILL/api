@@ -7,8 +7,9 @@ import ma.ensa.ebanking.dto.OperationDto;
 import ma.ensa.ebanking.models.Operation;
 import org.springframework.beans.BeanUtils;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
+
+
 @Data
 public class OperationMapper {
 
