@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.ensa.ebanking.enums.ServiceType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +30,9 @@ public class Service {
 
     @ManyToOne
     private Agency agency;
+
+    @OneToMany(mappedBy = "service")
+    private List<Operation> operations = new ArrayList<>();
 
     @PrePersist
     public void init(){

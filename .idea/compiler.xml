@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="ecommerce_backend" options="-parameters" />
+      <module name="ensabill_backend" options="-parameters" />
     </option>
   </component>
 </project>
