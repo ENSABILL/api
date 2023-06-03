@@ -1,6 +1,7 @@
 package ma.ensa.ebanking.models.user;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -20,6 +21,7 @@ import ma.ensa.ebanking.models.PaymentAccount;
 @Entity
 public class Client extends User {
 
+    @Column(unique = true, nullable = false)
     private String CIN;
 
     private String dob;
