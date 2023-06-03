@@ -1,6 +1,7 @@
 package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
+import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.InitialPasswordDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
 import ma.ensa.ebanking.exceptions.EmailNotAvailableException;
@@ -11,6 +12,7 @@ import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import ma.ensa.ebanking.utils.PasswordUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -94,6 +96,19 @@ public class ClientService {
         twilioOTPService.sendInitialPassword(dto);
         // create a payment account for the client
         paymentService.createAccount((Client) user);
+    }
+
+    public ClientDto getClient(String username) throws Exception{
+
+        Client client = clientRepository
+                .findByUsername(username)
+                .orElseThrow(
+                        () -> new RecordNotFoundException("client not found")
+                );
+
+        ClientDto clientDto = new ClientDto();
+        BeanUtils.copyProperties(client, clientDto);
+        return clientDto;
     }
 
 }
