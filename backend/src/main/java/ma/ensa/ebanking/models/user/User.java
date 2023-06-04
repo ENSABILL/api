@@ -51,7 +51,7 @@ public abstract class User implements UserDetails {
     public void init(){
         firstLogin = true;
         enabled = false;
-        fullName = firstName + " " + lastName; " ".stripTrailing()
+        fullName = firstName + " " + lastName;
     }
 
     @Override
