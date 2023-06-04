@@ -35,7 +35,7 @@ public class PaymentController {
     @PostMapping("/transfer")
     @ResponseStatus(HttpStatus.OK)
     public String transfer(@RequestBody TransferInternalDto dto) throws Exception{
-        service.transfer(dto);
+        service.transferFromToAccount(dto);
         return null;
     }
 

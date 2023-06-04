@@ -24,6 +24,4 @@ public class ServiceProduct {
     @ManyToOne
     private Service service;
 
-    @OneToMany(mappedBy = "serviceProduct")
-    private List<Operation> operations = new ArrayList<>();
 }

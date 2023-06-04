@@ -1,23 +1,24 @@
 package ma.ensa.ebanking.mapper;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ma.ensa.ebanking.dto.OperationDto;
 import ma.ensa.ebanking.models.Operation;
-import org.springframework.beans.BeanUtils;
 
 
 @Data
 public class OperationMapper {
 
-    public static OperationDto mapOperation(Operation operation){
-        OperationDto operationDto = new OperationDto();
-        try {
-            BeanUtils.copyProperties(operation, operationDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return operationDto;
+    public static OperationDto toDto(Operation operation) {
+
+        return OperationDto.builder()
+                .id(operation.getId())
+                .operationStatus(operation.getOperationStatus())
+                .operationTime(operation.getOperationTime())
+                .clientEmail(operation.getClient().getEmail())
+                .clientId(operation.getClient().getId())
+                .service(ServiceMapper.toDto(operation.getService()))
+                .clientUsername(operation.getClient().getUsername())
+                .amount(operation.getAmount())
+                .build();
     }
 }
