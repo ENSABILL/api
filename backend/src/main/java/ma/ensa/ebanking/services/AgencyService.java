@@ -7,12 +7,14 @@ import ma.ensa.ebanking.dto.ServiceDto;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
 import ma.ensa.ebanking.models.Agency;
+import ma.ensa.ebanking.models.CreditCard;
 import ma.ensa.ebanking.models.Service;
 import ma.ensa.ebanking.models.ServicePayment;
 import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.AgencyRepository;
+import ma.ensa.ebanking.repositories.CreditCardRepository;
 import ma.ensa.ebanking.repositories.ServicePaymentRepository;
 import ma.ensa.ebanking.repositories.ServiceRepository;
 
@@ -30,6 +32,8 @@ public class AgencyService {
 
     private final PaymentService paymentService;
 
+    private final CreditCardRepository creditCardRepository;
+
     // ------------ agency CRUD ------------
 
     public void addAgency(AgencyDTO dto) throws Exception{
@@ -42,11 +46,19 @@ public class AgencyService {
             throw new Exception();
         }
 
+        CreditCard creditCard = CreditCard.builder()
+                .balance(1_000_000)
+                .build();
+
+        creditCardRepository.save(creditCard);
+
+
         // add the agency
         Agency agency = Agency.builder()
                 .imm(dto.getImmId())
                 .name(dto.getName())
                 .patentId(dto.getPatentId())
+                .creditCard(creditCard)
                 .image(dto.getImage())
                 .build();
 

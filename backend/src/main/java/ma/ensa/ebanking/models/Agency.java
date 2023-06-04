@@ -25,7 +25,8 @@ public class Agency {
 
     private String patentId;
 
-    private String creditCardNumber;
+    @OneToOne
+    private CreditCard creditCard;
 
     private String image;
 

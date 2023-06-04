@@ -37,8 +37,7 @@ public class ClientService {
         // check the availability of username and email
         if (
                 userRepository.existsByUsername(request.getUsername()) &&
-                        userRepository.existsByEmail(request.getEmail())
-
+                userRepository.existsByEmail(request.getEmail())
         )
             throw new EmailNotAvailableException();
 
