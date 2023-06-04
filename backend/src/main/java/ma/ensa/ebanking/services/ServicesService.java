@@ -13,12 +13,12 @@ import ma.ensa.ebanking.repositories.AgencyRepository;
 import ma.ensa.ebanking.repositories.OperationRepository;
 import ma.ensa.ebanking.repositories.ServiceRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
-import org.springframework.stereotype.Service;
+import ma.ensa.ebanking.models.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@org.springframework.stereotype.Service
 @Transactional
 @AllArgsConstructor
 public class ServicesService {
@@ -99,7 +99,7 @@ public class ServicesService {
 
 
     public List<ServiceDto> getAllServices(String searchQuery, ServiceType type) {
-        List<ma.ensa.ebanking.models.Service> serviceList = new ArrayList<>();
+        List<Service> serviceList = new ArrayList<>();
         if (type != null) {
             if (searchQuery != null) {
 
@@ -160,7 +160,7 @@ public class ServicesService {
                 .getId();
     }
 
-    public void toggleService(String id) throws Exception {
+    public void toggleService(String id) {
 
         if(!AuthService.Auths.checkAdmin()) throw new PermissionException();
 

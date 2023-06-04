@@ -28,6 +28,8 @@ public class AgencyService {
 
     private final ServicePaymentRepository servicePaymentRepository;
 
+    private final PaymentService paymentService;
+
     // ------------ agency CRUD ------------
 
     public void addAgency(AgencyDTO dto) throws Exception{
@@ -105,25 +107,29 @@ public class AgencyService {
 
     public void payService(PaymentServiceDto dto) throws Exception {
 
+        // get auth client
         Client client = AuthService.Auths.getClient();
 
+        // get service
         Service service = serviceRepository
                 .findById(dto.getServiceId())
                 .orElseThrow(
                         () -> new RecordNotFoundException("service not found")
                 );
 
-
-
+        // TODO: transfer to agency credit card (need a method, ...)
+        paymentService.transfer(
+                service.getAgency(),
+                dto.getAmount()
+        );
 
         ServicePayment servicePayment =
                 ServicePayment.builder()
                         .service(service)
                         .client(client)
                         .amount(dto.getAmount())
-                        .data(dto.getData())
-                    .build();
-
+                        //.data(dto.getData())
+                        .build();
 
         servicePaymentRepository.save(servicePayment);
 

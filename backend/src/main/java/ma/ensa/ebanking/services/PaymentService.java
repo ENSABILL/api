@@ -6,13 +6,13 @@ import ma.ensa.ebanking.dto.TransferDto;
 import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.CreditCard;
 import ma.ensa.ebanking.models.PaymentAccount;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.CreditCardRepository;
 import ma.ensa.ebanking.repositories.PaymentRepository;
-import ma.ensa.ebanking.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,10 +38,18 @@ public class PaymentService {
     }
 
     public void createAccount(Client client, AccountLimit accountLimit){
+
+        CreditCard creditCard = CreditCard.builder()
+                .balance(1_000) // drna m3ak bat mzn
+                .build();
+
+        creditCardRepository.save(creditCard);
+
         PaymentAccount account = PaymentAccount
                 .builder()
                 .client(client)
                 .accountLimit(accountLimit)
+                .creditCard(creditCard)
                 .build();
 
         paymentRepository.save(account);
@@ -68,18 +76,14 @@ public class PaymentService {
 
     public void feed(TransferDto dto) throws Exception{
 
-        Client client = AuthService.Auths.getClient();
-
-        PaymentAccount account = client.getAccount();
-
-        if(account.getBalance() + dto.getAmount() > account.getAccountLimit().getLimit()){
-            throw new PermissionException("you cannot pass the limit");
-        }
+        PaymentAccount account = AuthService.Auths
+                .getClient()
+                .getAccount();
 
         CreditCard creditCard =  creditCardRepository
                 .findById(dto.getCreditCardNumber())
                 .orElseThrow(
-                    () -> new RecordNotFoundException("credit card not found")
+                        () -> new RecordNotFoundException("credit card not found")
                 );
 
         if(
@@ -90,7 +94,7 @@ public class PaymentService {
 
 
 
-        if(creditCard.getAmount() < dto.getAmount()){
+        if(creditCard.getBalance() < dto.getAmount()){
             throw new Exception("insufficient amount");
         }
 
@@ -130,4 +134,32 @@ public class PaymentService {
                 distAccount.getId(), dto.getAmount()
         );
     }
+
+    public void transfer(Agency agency, double amount) throws Exception{
+
+        PaymentAccount account = AuthService.Auths
+                .getClient()
+                .getAccount();
+
+        if(account.getBalance() < amount){
+            throw new RuntimeException("insufficient balance");
+        }
+
+        if(account.getAccountLimit().getLimit() < amount){
+            throw new RuntimeException("""
+                you cannot pass the limit,
+                please upgrade your account
+                """
+            );
+        }
+
+        creditCardRepository.incrAmount(
+                agency.getCreditCardNumber(), amount
+        );
+
+        paymentRepository.feedAccount(
+                account.getId(), -amount
+        );
+    }
+
 }
