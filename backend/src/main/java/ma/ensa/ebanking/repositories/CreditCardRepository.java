@@ -21,4 +21,12 @@ public interface CreditCardRepository
             @Param("num") String num ,
             @Param("amount") double amount
     );
+
+    @Modifying
+    @Query( "UPDATE CreditCard c SET c.amount = c.amount + :amount " +
+            "WHERE c.creditCardNumber = :num")
+    void incrAmount(
+            @Param("num") String num ,
+            @Param("amount") double amount
+    );
 }

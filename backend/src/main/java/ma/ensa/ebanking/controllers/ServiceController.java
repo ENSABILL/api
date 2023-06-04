@@ -28,7 +28,10 @@ public class ServiceController {
 
 
     @GetMapping
-    public List<ServiceDto> getAllServices(@RequestParam(value = "keyword", required = false) String keyword, @RequestParam(value = "type", required = false) ServiceType type){
+    public List<ServiceDto> getAllServices(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "type", required = false) ServiceType type
+    ){
         return servicesService.getAllServices(keyword, type);
     }
 

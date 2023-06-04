@@ -13,6 +13,7 @@ import ma.ensa.ebanking.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
@@ -41,6 +42,8 @@ public class MainApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
+        TomcatServletWebServerFactory a=new TomcatServletWebServerFactory();
 
         if (
                 userRepository.existsByUsername("badusername")
