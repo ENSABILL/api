@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.ensa.ebanking.enums.FactureStatus;
+import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.models.user.Client;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -20,11 +22,13 @@ public class Operation {
     private Float amount;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private Service service;
+    private ServiceProduct serviceProduct;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Client client;
 
-    private FactureStatus factureStatus;
+    private OperationStatus operationStatus;
+
+    private LocalDateTime operationTime;
 
 }

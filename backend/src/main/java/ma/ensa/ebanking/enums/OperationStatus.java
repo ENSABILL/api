@@ -1,7 +1,8 @@
 package ma.ensa.ebanking.enums;
 
-public enum FactureStatus {
+public enum OperationStatus {
     PAID,
+    PENDING,
     UNPAID
 
 }

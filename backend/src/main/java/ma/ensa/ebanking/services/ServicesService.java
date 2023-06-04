@@ -2,21 +2,31 @@ package ma.ensa.ebanking.services;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import ma.ensa.ebanking.dto.OperationDto;
 import ma.ensa.ebanking.dto.ServiceDto;
+import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.enums.ServiceType;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.mapper.OperationMapper;
 import ma.ensa.ebanking.mapper.ServiceMapper;
 import ma.ensa.ebanking.models.Agency;
+import ma.ensa.ebanking.models.Operation;
 import ma.ensa.ebanking.models.ServiceProduct;
-import ma.ensa.ebanking.repositories.AgencyRepository;
-import ma.ensa.ebanking.repositories.OperationRepository;
-import ma.ensa.ebanking.repositories.ServiceRepository;
-import ma.ensa.ebanking.repositories.UserRepository;
+import ma.ensa.ebanking.models.user.Client;
+import ma.ensa.ebanking.repositories.*;
+import ma.ensa.ebanking.request.AddDonationRequest;
+import ma.ensa.ebanking.request.AddFactureRequest;
+import ma.ensa.ebanking.request.AddRechargeRequest;
+import ma.ensa.ebanking.request.PayBillRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,77 +35,85 @@ public class ServicesService {
 
     private ServiceRepository serviceRepository;
 
+    private ServiceProductRepository serviceProductRepository;
+
     private UserRepository userRepository;
 
     private OperationRepository operationRepository;
 
     private AgencyRepository agencyRepository;
 
-    private PaymentService paymentService;
+    public OperationDto addDonation(AddDonationRequest donationRequest) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        ServiceProduct product = serviceProductRepository.findById(donationRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
 
-//    public OperationDto addDonation(AddDonationRequest donationRequest) {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-//        ma.ensa.ebanking.models.Service service = serviceRepository.findById(donationRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
-//
-//        //TODO Payment
-//
-//        Operation operation = Operation.builder()
-//                .service(service)
-//                .client(client)
-//                .amount(donationRequest.getAmount())
-//                .factureStatus(FactureStatus.PAID)
-//                .build();
-//        client.getOperations().add(operation);
-//        service.getOperations().add(operation);
-//        return OperationMapper.mapOperation(operationRepository.save(operation));
-//    }
-//
-//    public OperationDto addRecharge(AddRechargeRequest rechargeRequest) {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-//        ma.ensa.ebanking.models.Service service = serviceRepository.findById(rechargeRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
-//
-//        //TODO Payment
-//
-//        Operation operation = Operation.builder()
-//                .service(service)
-//                .client(client)
-//                .amount(rechargeRequest.getAmount().getAmount())
-//                .factureStatus(FactureStatus.PAID)
-//                .build();
-//        return OperationMapper.mapOperation(operationRepository.save(operation));
-//    }
-//
-//    public OperationDto addBill(AddFactureRequest addFactureRequest) {
-//        Client client = (Client) userRepository.findByUsername(addFactureRequest.getClientUsername()).orElseThrow(() -> new UsernameNotFoundException("Username not Found"));
-//        ma.ensa.ebanking.models.Service service = serviceRepository.findById(addFactureRequest.getServiceId()).orElseThrow();
-//        Operation operation = Operation.builder()
-//                .client(client)
-//                .service(service)
-//                .amount(addFactureRequest.getAmount())
-//                .factureStatus(FactureStatus.UNPAID)
-//                .build();
-//        return OperationMapper.mapOperation(operationRepository.save(operation));
-//    }
-//
-//    public OperationDto payBill(PayBillRequest payBillRequest) {
-//        Operation operation = operationRepository.findById(payBillRequest.getOperationId()).orElseThrow();
-//        //TODO Payment
-//        return OperationMapper.mapOperation(operationRepository.save(operation));
-//    }
-//
-//    public List<OperationDto> getClientUnpaidBills() {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-//        return client.getOperations().stream().filter(operation -> operation.getFactureStatus().equals(FactureStatus.UNPAID)).map(OperationMapper::mapOperation).collect(Collectors.toList());
-//    }
-//
-//    public List<OperationDto> getClientPaidBills() {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-//        return client.getOperations().stream().filter(operation -> operation.getFactureStatus().equals(FactureStatus.PAID)).map(OperationMapper::mapOperation).collect(Collectors.toList());
-//    }
+        //TODO Payment
+
+        Operation operation = Operation.builder()
+                .serviceProduct(product)
+                .client(client)
+                .amount(donationRequest.getAmount())
+                .operationStatus(OperationStatus.PAID)
+                .operationTime(LocalDateTime.now())
+                .build();
+        client.getOperations().add(operation);
+        product.getOperations().add(operation);
+        return OperationMapper.mapOperation(operationRepository.save(operation));
+    }
+
+    public OperationDto addRecharge(AddRechargeRequest rechargeRequest) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        ServiceProduct product = serviceProductRepository.findById(rechargeRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
+
+        //TODO Payment
+
+        Operation operation = Operation.builder()
+                .serviceProduct(product)
+                .client(client)
+                .amount(rechargeRequest.getAmount().getAmount())
+                .operationStatus(OperationStatus.PAID)
+                .operationTime(LocalDateTime.now())
+                .build();
+        return OperationMapper.mapOperation(operationRepository.save(operation));
+    }
+
+    public OperationDto addBill(AddFactureRequest addFactureRequest) {
+        if(!(AuthService.Auths.checkAgent())) throw new PermissionException();
+        Client client = (Client) userRepository.findByUsername(addFactureRequest.getClientUsername()).orElseThrow(() -> new UsernameNotFoundException("Username not Found"));
+        ServiceProduct service = serviceProductRepository.findById(addFactureRequest.getServiceId()).orElseThrow();
+        Operation operation = Operation.builder()
+                .client(client)
+                .serviceProduct(service)
+                .amount(addFactureRequest.getAmount())
+                .operationStatus(OperationStatus.UNPAID)
+                .build();
+        return OperationMapper.mapOperation(operationRepository.save(operation));
+    }
+
+    public OperationDto payBill(PayBillRequest payBillRequest) {
+        Operation operation = operationRepository.findById(payBillRequest.getOperationId()).orElseThrow();
+
+        //TODO Payment
+
+        operation.setOperationStatus(OperationStatus.PAID);
+        operation.setOperationTime(LocalDateTime.now());
+
+        return OperationMapper.mapOperation(operationRepository.save(operation));
+    }
+
+    public List<OperationDto> getClientUnpaidBills() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        return client.getOperations().stream().filter(operation -> operation.getOperationStatus().equals(OperationStatus.UNPAID)).map(OperationMapper::mapOperation).collect(Collectors.toList());
+    }
+
+    public List<OperationDto> getClientPaidBills() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+        return client.getOperations().stream().filter(operation -> operation.getOperationStatus().equals(OperationStatus.PAID)).map(OperationMapper::mapOperation).collect(Collectors.toList());
+    }
 
 
     public List<ServiceDto> getAllServices(String searchQuery, ServiceType type) {
