@@ -35,22 +35,17 @@ public class AuthService {
     private final TwilioOTPService twilioOTPService;
 
 
-    public String sendVerificationCode() throws Exception {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(username);
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            throw new RecordNotFoundException("user not found");
-        }
+    public String sendVerificationCode() {
 
-        // deprecated
+        User user = Auths.getUser();
+
         Random random = new Random();
         String code = String.valueOf(random.nextInt(9000) + 1000);
 
         // TODO: send code via SMS or via Email
         LoginTokenDTO dto = LoginTokenDTO.builder()
-                .username(username)
-                .phoneNumber(user.get().getPhoneNumber())
+                .username(user.getUsername())
+                .phoneNumber(user.getPhoneNumber())
                 .otp(code)
                 .build();
         twilioOTPService.sendOTP(dto);
@@ -64,7 +59,7 @@ public class AuthService {
 
         LoginToken token = LoginToken.builder()
                 .verificationCode(code)
-                .user(user.get())
+                .user(user)
                 .expireAt(expirationdDate)
                 .build();
 

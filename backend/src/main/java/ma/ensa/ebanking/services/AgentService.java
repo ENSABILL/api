@@ -39,7 +39,7 @@ public class AgentService {
         // check the availability of username and email
         if (
                 userRepository.existsByUsername(request.getUsername()) ||
-                        userRepository.existsByEmail(request.getEmail())
+                userRepository.existsByEmail(request.getEmail())
         )
             throw new EmailNotAvailableException();
 
@@ -48,7 +48,7 @@ public class AgentService {
         User agent = Agent.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
-                .fullName(request.getFirstName() + " " + request.getLastName())
+                 //.fullName(request.getFirstName() + " " + request.getLastName())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phoneNumber(request.getPhoneNumber())

@@ -1,10 +1,9 @@
 package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
-import ma.ensa.ebanking.controllers.TransferInternalDto;
+import ma.ensa.ebanking.dto.TransferInternalDto;
 import ma.ensa.ebanking.dto.TransferDto;
 import ma.ensa.ebanking.enums.AccountLimit;
-import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
 import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.CreditCard;

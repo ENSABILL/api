@@ -140,18 +140,20 @@ public class ServicesService {
                 );
 
         // add the service
-        final ma.ensa.ebanking.models.Service service = ma.ensa.ebanking.models.Service.builder()
+        final Service service = Service.builder()
                 .agency(agency)
                 .name(dto.getName())
                 .type(dto.getType())
                 .build();
 
-        List<ServiceProduct> serviceProducts = dto.getProducts().stream().map(serviceProductName -> {
-            return ServiceProduct.builder()
-                    .name(serviceProductName)
-                    .service(service)
-                    .build();
-        }).toList();
+        List<ServiceProduct> serviceProducts = dto.getProducts()
+                .stream()
+                .map(name ->
+                    ServiceProduct.builder()
+                        .name(name)
+                        .service(service)
+                        .build()
+                ).toList();
 
         service.setProducts(serviceProducts);
         // return the new id

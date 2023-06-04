@@ -4,6 +4,7 @@ package ma.ensa.ebanking.controllers;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.LevelDto;
 import ma.ensa.ebanking.dto.TransferDto;
+import ma.ensa.ebanking.dto.TransferInternalDto;
 import ma.ensa.ebanking.services.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentController {
 
     private final PaymentService service;
+
 
     @PutMapping("/upgrade")
     @ResponseStatus(HttpStatus.OK)
