@@ -1,4 +1,4 @@
-package ma.ensa.ebanking.controllers;
+package ma.ensa.ebanking.dto;
 
 import lombok.Data;
 

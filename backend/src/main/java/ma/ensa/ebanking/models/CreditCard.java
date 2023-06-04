@@ -26,7 +26,7 @@ public class CreditCard {
 
     private LocalDate expirationDate, creationDate;
 
-    private double amount;
+    private double balance;
 
     @PrePersist
     public void init(){
@@ -48,8 +48,6 @@ public class CreditCard {
         creationDate = LocalDate.now();
         expirationDate = creationDate.plusYears(5);
 
-        // init the amount
-        amount = 10_000;
     }
 
 }

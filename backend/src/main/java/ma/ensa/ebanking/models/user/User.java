@@ -48,6 +48,7 @@ public abstract class User implements UserDetails {
 
 
     @PrePersist
+
     public void init() {
 //         firstLogin = true;
 //         enabled = false;

@@ -4,6 +4,7 @@ package ma.ensa.ebanking.controllers;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
+import ma.ensa.ebanking.dto.auth.UsernameDto;
 import ma.ensa.ebanking.services.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

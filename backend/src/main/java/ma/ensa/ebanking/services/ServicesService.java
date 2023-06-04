@@ -13,6 +13,7 @@ import ma.ensa.ebanking.mapper.ServiceMapper;
 import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.Operation;
 import ma.ensa.ebanking.models.ServiceProduct;
+
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.*;
 import ma.ensa.ebanking.request.AddDonationRequest;
@@ -23,12 +24,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import ma.ensa.ebanking.repositories.AgencyRepository;
+import ma.ensa.ebanking.repositories.OperationRepository;
+import ma.ensa.ebanking.repositories.ServiceRepository;
+import ma.ensa.ebanking.repositories.UserRepository;
+
+
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@org.springframework.stereotype.Service
 @Transactional
 @AllArgsConstructor
 public class ServicesService {
@@ -43,12 +51,22 @@ public class ServicesService {
 
     private AgencyRepository agencyRepository;
 
+    private PaymentService paymentService;
+
     public OperationDto addDonation(AddDonationRequest donationRequest) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         ServiceProduct product = serviceProductRepository.findById(donationRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
 
-        //TODO Payment
+        ServiceProduct serviceProduct = serviceProductRepository.findById(donationRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Product Not Found"));
+        Agency agency = serviceProduct.getService().getAgency();
+
+        try {
+            paymentService.transfer(agency, donationRequest.getAmount());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
 
         Operation operation = Operation.builder()
                 .serviceProduct(product)
@@ -67,7 +85,16 @@ public class ServicesService {
         Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         ServiceProduct product = serviceProductRepository.findById(rechargeRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
 
-        //TODO Payment
+        ServiceProduct serviceProduct = serviceProductRepository.findById(rechargeRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Product Not Found"));
+        Agency agency = serviceProduct.getService().getAgency();
+
+        try {
+            paymentService.transfer(agency, rechargeRequest.getAmount().getAmount());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
 
         Operation operation = Operation.builder()
                 .serviceProduct(product)
@@ -94,8 +121,11 @@ public class ServicesService {
 
     public OperationDto payBill(PayBillRequest payBillRequest) {
         Operation operation = operationRepository.findById(payBillRequest.getOperationId()).orElseThrow();
-
-        //TODO Payment
+        try {
+            paymentService.transfer(operation.getServiceProduct().getService().getAgency(), operation.getAmount());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         operation.setOperationStatus(OperationStatus.PAID);
         operation.setOperationTime(LocalDateTime.now());
@@ -164,12 +194,14 @@ public class ServicesService {
                 .type(dto.getType())
                 .build();
 
-        List<ServiceProduct> serviceProducts = dto.getProducts().stream().map(serviceProductName -> {
-            return ServiceProduct.builder()
-                    .name(serviceProductName)
-                    .service(service)
-                    .build();
-        }).toList();
+        List<ServiceProduct> serviceProducts = dto.getProducts()
+                .stream()
+                .map(name ->
+                    ServiceProduct.builder()
+                        .name(name)
+                        .service(service)
+                        .build()
+                ).toList();
 
         service.setProducts(serviceProducts);
         // return the new id
@@ -178,7 +210,7 @@ public class ServicesService {
                 .getId();
     }
 
-    public void toggleService(String id) throws Exception {
+    public void toggleService(String id) {
 
         if(!AuthService.Auths.checkAdmin()) throw new PermissionException();
 

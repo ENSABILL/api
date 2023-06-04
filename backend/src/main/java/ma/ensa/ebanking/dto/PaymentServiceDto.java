@@ -6,5 +6,4 @@ import lombok.Data;
 public class PaymentServiceDto {
     private String serviceId;
     private double amount;
-    private String data;
 }

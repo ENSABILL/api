@@ -15,9 +15,17 @@ public interface CreditCardRepository
         extends JpaRepository<CreditCard, String> {
 
     @Modifying
-    @Query( "UPDATE CreditCard c SET c.amount = c.amount - :amount " +
+    @Query( "UPDATE CreditCard c SET c.balance = c.balance - :amount " +
             "WHERE c.creditCardNumber = :num")
     void descAmount(
+            @Param("num") String num ,
+            @Param("amount") double amount
+    );
+
+    @Modifying
+    @Query( "UPDATE CreditCard c SET c.balance = c.balance + :amount " +
+            "WHERE c.creditCardNumber = :num")
+    void incrAmount(
             @Param("num") String num ,
             @Param("amount") double amount
     );

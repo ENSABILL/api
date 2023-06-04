@@ -33,8 +33,10 @@ public class ServicePayment {
 
     private double amount;
 
+    /*
     @Column(length = 1023)
     private String data;
+    */
 
     @CreationTimestamp
     private LocalDateTime at;

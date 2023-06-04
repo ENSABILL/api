@@ -2,6 +2,7 @@ package ma.ensa.ebanking.controllers;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.AgencyDTO;
+import ma.ensa.ebanking.dto.PaymentServiceDto;
 import ma.ensa.ebanking.dto.ServiceDto;
 import ma.ensa.ebanking.services.AgencyService;
 import ma.ensa.ebanking.services.ServicesService;
@@ -58,6 +59,13 @@ public class AgencyController {
     ) throws Exception{
         servicesService.toggleService(id);
         return "service disabled successfully";
+    }
+
+    @PostMapping("/pay")
+    @ResponseStatus(HttpStatus.OK)
+    public String payService(@RequestBody PaymentServiceDto dto) throws Exception{
+        service.payService(dto);
+        return "transferred successfully";
     }
 
 }

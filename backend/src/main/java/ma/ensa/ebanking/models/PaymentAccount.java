@@ -21,10 +21,12 @@ public class PaymentAccount {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private double balance;
 
     @Enumerated(EnumType.STRING)
     private AccountLimit accountLimit;
+
+    @OneToOne
+    private CreditCard creditCard;
 
     @OneToOne
     @JsonIgnore
@@ -32,9 +34,12 @@ public class PaymentAccount {
 
     @PrePersist
     public void init() {
-        this.balance = .0;
         if (accountLimit == null) {
             this.accountLimit = AccountLimit.ACC_200;
         }
+    }
+
+    public double getBalance(){
+        return creditCard.getBalance();
     }
 }
