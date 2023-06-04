@@ -30,17 +30,16 @@ public class AuthService {
     private final TokenRepository tokenRepository;
     private final UserService userService;
     private final JwtService jwtService;
-    public final  AuthenticationManager authenticationManager;
+    public final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final TwilioOTPService twilioOTPService;
-
 
 
     public String sendVerificationCode() throws Exception {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println(username);
         Optional<User> user = userRepository.findByUsername(username);
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             throw new RecordNotFoundException("user not found");
         }
 
@@ -76,17 +75,17 @@ public class AuthService {
 
     public void verifyCode(String tokenId, String code) throws Exception {
 
-        LoginToken loginToken =tokenRepository.findById(tokenId)
+        LoginToken loginToken = tokenRepository.findById(tokenId)
                 .orElseThrow(
                         () -> new RecordNotFoundException("token not found")
                 );
 
-        if(loginToken.expired()) {
+        if (loginToken.expired()) {
             tokenRepository.deleteById(tokenId);
             throw new Exception("the token is expired");
         }
 
-        if(!loginToken.getVerificationCode().equals(code)){
+        if (!loginToken.getVerificationCode().equals(code)) {
             throw new Exception("the given code is wrong");
         }
 
@@ -94,20 +93,20 @@ public class AuthService {
         tokenRepository.save(loginToken);
     }
 
-    public void resetPassword(ResetPasswordDto dto) throws Exception{
+    public void resetPassword(ResetPasswordDto dto) throws Exception {
 
         LoginToken loginToken = tokenRepository.findById(dto.getToken())
                 .orElseThrow(
                         () -> new RecordNotFoundException("token not found")
                 );
 
-        if(!loginToken.isVerified()){
+        if (!loginToken.isVerified()) {
             throw new Exception("you are forbidden to reset your password. get an otp before resetting password.");
         }
 
         tokenRepository.deleteById(dto.getToken());
 
-        if(loginToken.expired()){
+        if (loginToken.expired()) {
             throw new Exception("the token is expired");
         }
 
@@ -119,7 +118,7 @@ public class AuthService {
 
     }
 
-    public AuthResponse authenticate(AuthRequest request){
+    public AuthResponse authenticate(AuthRequest request) {
 
         User user = (User) userService.loadUserByUsername(
                 request.getUsername()
@@ -154,31 +153,42 @@ public class AuthService {
                     .getAuthentication()
                     .getPrincipal();
 
-            if(user == null)
+            if (user == null)
                 throw new UnauthenticatedException();
 
             return user;
         }
 
         // Singleton
-        public static void checkAdmin() throws Exception{
-            if(getUser() instanceof Admin) return;
-            throw new PermissionException();
+        public static boolean checkAdmin() {
+
+            return getUser() instanceof Admin;
         }
 
-        public static Agent getAgent() throws Exception{
+        public static boolean checkAgent() {
+            return getUser() instanceof Agent;
+        }
+
+        public static boolean checkAgentBelongsToAgency(String agencyImm) {
+            boolean isAgent = checkAgent();
+            if (!isAgent) return false;
+            Agent agent = (Agent) getUser();
+            return agent.getAgency().getImm().equals(agencyImm);
+        }
+
+        public static Agent getAgent() throws Exception {
             try {
                 return (Agent) getUser();
-            }catch (ClassCastException e){
+            } catch (ClassCastException e) {
                 throw new PermissionException();
             }
         }
 
         // TODO: for payment, transfer, ... etc
-        public static Client getClient() throws Exception{
-            try{
+        public static Client getClient() throws Exception {
+            try {
                 return (Client) getUser();
-            }catch (ClassCastException e){
+            } catch (ClassCastException e) {
                 throw new PermissionException();
             }
         }

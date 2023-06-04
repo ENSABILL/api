@@ -2,8 +2,9 @@ package ma.ensa.ebanking.controllers;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.AgencyDTO;
-import ma.ensa.ebanking.dto.ServiceDTO;
+import ma.ensa.ebanking.dto.ServiceDto;
 import ma.ensa.ebanking.services.AgencyService;
+import ma.ensa.ebanking.services.ServicesService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class AgencyController {
 
     private final AgencyService service;
+    private final ServicesService servicesService;
 
     // get all agencies
     @GetMapping
@@ -41,12 +43,12 @@ public class AgencyController {
 
     // add a service to the agency
 
-    @PostMapping("/{imm}")
+    @PostMapping("/{imm}/service")
     public String addService(
             @PathVariable String imm,
-            @RequestBody ServiceDTO dto
+            @RequestBody ServiceDto dto
     ) throws Exception{
-        String sid = service.addService(imm, dto);
+        String sid = servicesService.addService(imm, dto);
         return String.format("service added successfully\nid: %s", sid);
     }
 
@@ -54,7 +56,7 @@ public class AgencyController {
     public String toggleService(
             @PathVariable String id
     ) throws Exception{
-        service.toggleService(id);
+        servicesService.toggleService(id);
         return "service disabled successfully";
     }
 

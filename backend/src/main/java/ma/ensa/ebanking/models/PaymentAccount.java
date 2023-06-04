@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.models.user.Client;
 
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 
 @Entity
 public class PaymentAccount {
@@ -28,8 +31,10 @@ public class PaymentAccount {
     private Client client;
 
     @PrePersist
-    public void init(){
+    public void init() {
         this.balance = .0;
-        this.accountLimit = AccountLimit.ACC_200;
+        if (accountLimit == null) {
+            this.accountLimit = AccountLimit.ACC_200;
+        }
     }
 }

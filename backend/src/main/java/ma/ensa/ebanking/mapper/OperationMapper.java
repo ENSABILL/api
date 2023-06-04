@@ -14,7 +14,7 @@ public class OperationMapper {
     public static OperationDto mapOperation(Operation operation){
         OperationDto operationDto = new OperationDto();
         try {
-            BeanUtils.copyProperties(operationDto, operation);
+            BeanUtils.copyProperties(operation, operationDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
