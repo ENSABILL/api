@@ -1,8 +1,6 @@
 package ma.ensa.ebanking.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,13 +29,13 @@ public class Agency {
 
     private String image;
 
-    @OneToMany(mappedBy = "agency")
+    @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Service> services;
 
-    @OneToMany(mappedBy = "agency")
+    @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Agent> agents = new ArrayList<>();
 
-    public void showActiveServicesOnly(){
+    public void showActiveServicesOnly() {
         services = services
                 .stream()
                 .filter(Service::isActive)

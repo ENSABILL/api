@@ -5,11 +5,13 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ma.ensa.ebanking.models.Agency;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
 

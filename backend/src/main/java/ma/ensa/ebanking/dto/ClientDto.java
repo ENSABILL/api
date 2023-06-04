@@ -5,6 +5,7 @@ import ma.ensa.ebanking.models.PaymentAccount;
 
 @Data
 public class ClientDto {
+    private String id;
 
     private String fullName;
 

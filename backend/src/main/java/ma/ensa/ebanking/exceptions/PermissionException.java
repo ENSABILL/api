@@ -1,6 +1,6 @@
 package ma.ensa.ebanking.exceptions;
 
-public class PermissionException extends Exception{
+public class PermissionException extends RuntimeException{
 
     public PermissionException(){
         super("you are not permitted");

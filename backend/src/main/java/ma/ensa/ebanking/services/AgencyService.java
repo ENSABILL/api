@@ -3,7 +3,7 @@ package ma.ensa.ebanking.services;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.AgencyDTO;
 import ma.ensa.ebanking.dto.PaymentServiceDto;
-import ma.ensa.ebanking.dto.ServiceDTO;
+import ma.ensa.ebanking.dto.ServiceDto;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
 import ma.ensa.ebanking.models.Agency;
@@ -33,7 +33,7 @@ public class AgencyService {
     public void addAgency(AgencyDTO dto) throws Exception{
 
         // the admin is the only one who has this permission
-        AuthService.Auths.checkAdmin();
+        if(!AuthService.Auths.checkAdmin()) throw new PermissionException();
 
         // check if the imm is not exist in the repo
         if(agencyRepository.existsById(dto.getImmId())){
@@ -45,6 +45,7 @@ public class AgencyService {
                 .imm(dto.getImmId())
                 .name(dto.getName())
                 .patentId(dto.getPatentId())
+                .image(dto.getImage())
                 .build();
 
         agencyRepository.save(agency);
@@ -98,42 +99,6 @@ public class AgencyService {
                     .services(a.getServices())
                     .build()
             ).toList();
-    }
-
-    // ------------ service CRUD ------------
-
-    public String addService(String imm, ServiceDTO dto) throws Exception{
-
-        // check the permission
-        AuthService.Auths.checkAdmin();
-
-        // get the agency
-        Agency agency = agencyRepository.findById(imm)
-                .orElseThrow(
-                        () -> new RecordNotFoundException("record not found")
-                );
-
-        // add the service
-        final Service service = Service.builder()
-                .agency(agency)
-                .name(dto.getName())
-                .type(dto.getType())
-                .build();
-
-        // return the new id
-        return serviceRepository
-                .save(service)
-                .getId();
-    }
-
-    public void toggleService(String id) throws Exception{
-
-        AuthService.Auths.checkAdmin();
-
-        if(!serviceRepository.toggleService(id)){
-            throw new RecordNotFoundException("service not found");
-        }
-
     }
 
     // ------------ payment service CRUD ------------
