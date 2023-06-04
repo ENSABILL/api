@@ -8,15 +8,13 @@ import ma.ensa.ebanking.models.Operation;
 import org.springframework.beans.BeanUtils;
 
 
-
-
 @Data
 public class OperationMapper {
 
     public static OperationDto mapOperation(Operation operation){
         OperationDto operationDto = new OperationDto();
         try {
-            BeanUtils.copyProperties(operationDto, operation);
+            BeanUtils.copyProperties(operation, operationDto);
         } catch (Exception e) {
             e.printStackTrace();
         }

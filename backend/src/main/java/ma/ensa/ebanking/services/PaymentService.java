@@ -37,10 +37,11 @@ public class PaymentService {
         );
     }
 
-    public void createAccount(Client client){
+    public void createAccount(Client client, AccountLimit accountLimit){
         PaymentAccount account = PaymentAccount
                 .builder()
                 .client(client)
+                .accountLimit(accountLimit)
                 .build();
 
         paymentRepository.save(account);

@@ -48,10 +48,11 @@ public abstract class User implements UserDetails {
 
 
     @PrePersist
-    public void init(){
-        firstLogin = true;
-        enabled = false;
-        fullName = firstName + " " + lastName;
+
+    public void init() {
+//         firstLogin = true;
+//         enabled = false;
+        fullName = (firstName + " " + lastName).stripTrailing();
     }
 
     @Override
