@@ -153,7 +153,8 @@ public class PaymentService {
         }
 
         creditCardRepository.incrAmount(
-                agency.getCreditCardNumber(), amount
+                agency.getCreditCard().getCreditCardNumber()
+                ,amount
         );
 
         paymentRepository.feedAccount(
