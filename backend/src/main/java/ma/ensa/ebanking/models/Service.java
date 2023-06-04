@@ -34,9 +34,6 @@ public class Service {
     @OneToMany(mappedBy = "service",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<ServiceProduct> products = new ArrayList<>();
 
-    @OneToMany(mappedBy = "service")
-    private List<Operation> operations = new ArrayList<>();
-
     @PrePersist
     public void init(){
         this.active = true;
