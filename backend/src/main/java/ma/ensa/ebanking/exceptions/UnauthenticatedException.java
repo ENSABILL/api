@@ -1,4 +1,4 @@
 package ma.ensa.ebanking.exceptions;
 
-public class UnauthenticatedException extends Exception {
+public class UnauthenticatedException extends RuntimeException {
 }

@@ -1,16 +1,13 @@
 package ma.ensa.ebanking.models.user;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.models.Operation;
 import ma.ensa.ebanking.models.PaymentAccount;
 
@@ -39,5 +36,8 @@ public class Client extends User {
 
     @OneToMany(mappedBy = "client")
     List<Operation> operations = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private AccountLimit desiredAccountLimit;
 
 }

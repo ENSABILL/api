@@ -12,6 +12,7 @@ public class AgencyDTO {
     private String name;
     private String immId;
     private String patentId;
+    private String image;
 
     private List<Service> services;
 }

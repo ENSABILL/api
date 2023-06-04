@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/client")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ClientController {
 
     private final ClientService clientService;

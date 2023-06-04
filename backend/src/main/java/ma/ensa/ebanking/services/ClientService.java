@@ -35,9 +35,9 @@ public class ClientService {
         Agent agent = (verify) ? Auths.getAgent() : null;
 
         // check the availability of username and email
-        if(
-            userRepository.existsByUsername(request.getUsername()) &&
-            userRepository.existsByEmail(request.getEmail())
+        if (
+                userRepository.existsByUsername(request.getUsername()) &&
+                        userRepository.existsByEmail(request.getEmail())
 
         )
             throw new EmailNotAvailableException();
@@ -48,8 +48,10 @@ public class ClientService {
                 .CIN(request.getCin())
                 .dob(request.getDob())
                 .enabled(verify)
+                .firstLogin(true)
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
+                .desiredAccountLimit(request.getDesiredAccountLimit())
                 .username(request.getUsername())
                 .verifiedBy(agent)
                 .build();
@@ -69,7 +71,7 @@ public class ClientService {
         clientRepository.save(client);
 
         if (verify) {
-            paymentService.createAccount(client);
+            paymentService.createAccount(client, request.getDesiredAccountLimit());
         }
     }
 
@@ -95,10 +97,10 @@ public class ClientService {
         // send generated password
         twilioOTPService.sendInitialPassword(dto);
         // create a payment account for the client
-        paymentService.createAccount((Client) user);
+        paymentService.createAccount((Client) user, ((Client) user).getDesiredAccountLimit());
     }
 
-    public ClientDto getClient(String username) throws Exception{
+    public ClientDto getClient(String username) throws Exception {
 
         Optional<Client> clientOpt =
                 clientRepository.findByUsername(username);
