@@ -46,6 +46,7 @@ public class PaymentService {
     private final UserRepository userRepository;
 
     private final OperationRepository operationRepository;
+    private final AuthService authService;
 
     private boolean checkExp(String eDto, LocalDate eEnt) {
 
@@ -189,7 +190,6 @@ public class PaymentService {
         if (!service.getType().equals(ServiceType.DONATION))
             throw new ServiceNotCompatibleException("the service is not a donation service");
 
-
         Agency agency = service.getAgency();
 
         try {
@@ -197,7 +197,6 @@ public class PaymentService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
 
         Operation operation = Operation.builder()
                 .service(service)
@@ -213,6 +212,7 @@ public class PaymentService {
 
 
     public OperationDto payRecharge(PayRechargeRequest rechargeRequest) {
+        authService.verifyOtpToken(rechargeRequest.getToken());
 
         if (!RechargeAmount.checkAmountIsValid(rechargeRequest.getAmount())) {
             throw new RechargeAmountNotSupportedException("Recharge amount : " + rechargeRequest.getAmount() + " not supported");
@@ -244,7 +244,7 @@ public class PaymentService {
         return OperationMapper.toDto(operationRepository.save(operation));
     }
 
-    public OperationDto payBill(Long operationId) {
+    private OperationDto payBill(Long operationId) {
         Operation operation = operationRepository.findByIdAndOperationStatus(operationId, OperationStatus.UNPAID).orElse(null);
         if (operation == null) return null;
         try {
@@ -260,6 +260,7 @@ public class PaymentService {
     }
 
     public List<OperationDto> payBills(PayBillsRequest payBillsRequest) {
+        authService.verifyOtpToken(payBillsRequest.getToken());
         return payBillsRequest.getOperationsIds().stream().map(this::payBill).filter(Objects::nonNull).toList();
     }
 

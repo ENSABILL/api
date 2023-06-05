@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class PayRechargeRequest {
     private String serviceId;
     private float amount;
+    private String token;
 }

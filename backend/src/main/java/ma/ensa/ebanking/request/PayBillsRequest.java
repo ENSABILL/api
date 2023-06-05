@@ -14,4 +14,5 @@ import java.util.List;
 @Builder
 public class PayBillsRequest {
     private List<Long> operationsIds = new ArrayList<>();
+    private String token;
 }
