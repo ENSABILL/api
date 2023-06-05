@@ -87,25 +87,25 @@ public class AuthService {
         tokenRepository.save(otpToken);
     }
 
-    public OtpToken verifyOtpToken(String token) throws Exception {
+    public OtpToken verifyOtpToken(String token) {
         OtpToken otpToken = tokenRepository.findById(token)
                 .orElseThrow(
                         () -> new RecordNotFoundException("token not found")
                 );
 
         if (!otpToken.isVerified()) {
-            throw new Exception("you are forbidden to reset your password. get an otp before resetting password.");
+            throw new RuntimeException("you are forbidden to do this operation. get an otp code.");
         }
 
         tokenRepository.deleteById(token);
 
         if (otpToken.expired()) {
-            throw new Exception("the token is expired");
+            throw new RuntimeException("the token is expired");
         }
         return otpToken;
     }
 
-    public void resetPassword(ResetPasswordDto dto) throws Exception {
+    public void resetPassword(ResetPasswordDto dto) {
         OtpToken otpToken = verifyOtpToken(dto.getToken());
 
         // reset the password
