@@ -56,7 +56,7 @@ public class AuthService {
         final Date
                 expirationdDate = new Date(CURRENT_MILLIS + DURATION);
 
-        LoginToken token = LoginToken.builder()
+        OtpToken token = OtpToken.builder()
                 .verificationCode(code)
                 .user(user)
                 .expireAt(expirationdDate)
@@ -69,44 +69,48 @@ public class AuthService {
 
     public void verifyCode(String tokenId, String code) throws Exception {
 
-        LoginToken loginToken = tokenRepository.findById(tokenId)
+        OtpToken otpToken = tokenRepository.findById(tokenId)
                 .orElseThrow(
                         () -> new RecordNotFoundException("token not found")
                 );
 
-        if (loginToken.expired()) {
+        if (otpToken.expired()) {
             tokenRepository.deleteById(tokenId);
             throw new Exception("the token is expired");
         }
 
-        if (!loginToken.getVerificationCode().equals(code)) {
+        if (!otpToken.getVerificationCode().equals(code)) {
             throw new Exception("the given code is wrong");
         }
 
-        loginToken.setVerified(true);
-        tokenRepository.save(loginToken);
+        otpToken.setVerified(true);
+        tokenRepository.save(otpToken);
     }
 
-    public void resetPassword(ResetPasswordDto dto) throws Exception {
-
-        LoginToken loginToken = tokenRepository.findById(dto.getToken())
+    public OtpToken verifyOtpToken(String token) throws Exception {
+        OtpToken otpToken = tokenRepository.findById(token)
                 .orElseThrow(
                         () -> new RecordNotFoundException("token not found")
                 );
 
-        if (!loginToken.isVerified()) {
+        if (!otpToken.isVerified()) {
             throw new Exception("you are forbidden to reset your password. get an otp before resetting password.");
         }
 
-        tokenRepository.deleteById(dto.getToken());
+        tokenRepository.deleteById(token);
 
-        if (loginToken.expired()) {
+        if (otpToken.expired()) {
             throw new Exception("the token is expired");
         }
+        return otpToken;
+    }
+
+    public void resetPassword(ResetPasswordDto dto) throws Exception {
+        OtpToken otpToken = verifyOtpToken(dto.getToken());
 
         // reset the password
         userRepository.resetPassword(
-                loginToken.getUser().getId(),
+                otpToken.getUser().getId(),
                 passwordEncoder.encode(dto.getNewPassword())
         );
 

@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class PayDonationRequest {
     private String serviceId;
     private Float amount;
+    private String token;
 }
