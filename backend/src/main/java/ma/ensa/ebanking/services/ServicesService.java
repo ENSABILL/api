@@ -2,27 +2,15 @@ package ma.ensa.ebanking.services;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import ma.ensa.ebanking.dto.OperationDto;
 import ma.ensa.ebanking.dto.ServiceDto;
-import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.enums.ServiceType;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
-import ma.ensa.ebanking.mapper.OperationMapper;
 import ma.ensa.ebanking.mapper.ServiceMapper;
 import ma.ensa.ebanking.models.Agency;
-import ma.ensa.ebanking.models.Operation;
 import ma.ensa.ebanking.models.ServiceProduct;
 
-import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.*;
-import ma.ensa.ebanking.request.AddDonationRequest;
-import ma.ensa.ebanking.request.AddFactureRequest;
-import ma.ensa.ebanking.request.AddRechargeRequest;
-import ma.ensa.ebanking.request.PayBillRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
 import ma.ensa.ebanking.repositories.AgencyRepository;
 import ma.ensa.ebanking.repositories.OperationRepository;
@@ -30,11 +18,8 @@ import ma.ensa.ebanking.repositories.ServiceRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 
 
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 @Transactional

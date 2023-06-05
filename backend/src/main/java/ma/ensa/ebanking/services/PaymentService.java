@@ -2,11 +2,15 @@ package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.OperationDto;
-import ma.ensa.ebanking.dto.TransferInternalDto;
 import ma.ensa.ebanking.dto.TransferDto;
+import ma.ensa.ebanking.dto.TransferInternalDto;
 import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.enums.OperationStatus;
+import ma.ensa.ebanking.enums.RechargeAmount;
+import ma.ensa.ebanking.enums.ServiceType;
+import ma.ensa.ebanking.exceptions.RechargeAmountNotSupportedException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.exceptions.ServiceNotCompatibleException;
 import ma.ensa.ebanking.mapper.OperationMapper;
 import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.CreditCard;
@@ -14,18 +18,22 @@ import ma.ensa.ebanking.models.Operation;
 import ma.ensa.ebanking.models.PaymentAccount;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.*;
-import ma.ensa.ebanking.request.AddDonationRequest;
-import ma.ensa.ebanking.request.AddRechargeRequest;
-import ma.ensa.ebanking.request.PayBillRequest;
+import ma.ensa.ebanking.request.PayBillsRequest;
+import ma.ensa.ebanking.request.PayDonationRequest;
+import ma.ensa.ebanking.request.PayRechargeRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
@@ -33,23 +41,23 @@ public class PaymentService {
     private final CreditCardRepository creditCardRepository;
 
     private final ClientRepository clientRepository;
-    private ServiceRepository serviceRepository;
+    private final ServiceRepository serviceRepository;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private OperationRepository operationRepository;
+    private final OperationRepository operationRepository;
 
-    private boolean checkExp(String eDto, LocalDate eEnt){
+    private boolean checkExp(String eDto, LocalDate eEnt) {
 
         String[] arr = eDto.split("/");
 
         return (
                 Integer.parseInt(arr[0]) == eEnt.getMonthValue()
-                && Integer.parseInt(arr[1]) + 2000 == eEnt.getYear()
+                        && Integer.parseInt(arr[1]) + 2000 == eEnt.getYear()
         );
     }
 
-    public void createAccount(Client client, AccountLimit accountLimit){
+    public void createAccount(Client client, AccountLimit accountLimit) {
 
         CreditCard creditCard = CreditCard.builder()
                 .balance(1_000) // drna m3ak bat mzn
@@ -73,7 +81,7 @@ public class PaymentService {
         Client client = AuthService.Auths.getClient();
 
         // get the account
-        if(client.getAccount() == null){
+        if (client.getAccount() == null) {
             throw new RecordNotFoundException("account not found");
         }
         PaymentAccount account = client.getAccount();
@@ -86,27 +94,26 @@ public class PaymentService {
         paymentRepository.upgradeAccount(account.getId(), newLimit);
     }
 
-    public void feed(TransferDto dto) throws Exception{
+    public void feed(TransferDto dto) throws Exception {
 
         PaymentAccount account = AuthService.Auths
                 .getClient()
                 .getAccount();
 
-        CreditCard creditCard =  creditCardRepository
+        CreditCard creditCard = creditCardRepository
                 .findById(dto.getCreditCardNumber())
                 .orElseThrow(
                         () -> new RecordNotFoundException("credit card not found")
                 );
 
-        if(
+        if (
                 creditCard.getCvv() != dto.getCvv()
-                && !checkExp(dto.getExp(), creditCard.getExpirationDate())
+                        && !checkExp(dto.getExp(), creditCard.getExpirationDate())
         )
             throw new RecordNotFoundException("credit card not found");
 
 
-
-        if(creditCard.getBalance() < dto.getAmount()){
+        if (creditCard.getBalance() < dto.getAmount()) {
             throw new Exception("insufficient amount");
         }
 
@@ -122,13 +129,13 @@ public class PaymentService {
 
     }
 
-    public void transferFromToAccount(TransferInternalDto dto) throws Exception{
+    public void transferFromToAccount(TransferInternalDto dto) throws Exception {
 
         Client client = AuthService.Auths.getClient();
 
         PaymentAccount account = client.getAccount();
 
-        if(account.getBalance() < dto.getAmount()){
+        if (account.getBalance() < dto.getAmount()) {
             throw new Exception("insufficient balance");
         }
 
@@ -139,7 +146,7 @@ public class PaymentService {
                 ).getAccount();
 
         paymentRepository.feedAccount(
-            account.getId(), -dto.getAmount()
+                account.getId(), -dto.getAmount()
         );
 
         paymentRepository.feedAccount(
@@ -147,27 +154,27 @@ public class PaymentService {
         );
     }
 
-    public void transfer(Agency agency, double amount) throws Exception{
+    public void transfer(Agency agency, double amount) throws Exception {
 
         PaymentAccount account = AuthService.Auths
                 .getClient()
                 .getAccount();
 
-        if(account.getBalance() < amount){
+        if (account.getBalance() < amount) {
             throw new RuntimeException("insufficient balance");
         }
 
-        if(account.getAccountLimit().getLimit() < amount){
+        if (account.getAccountLimit().getLimit() < amount) {
             throw new RuntimeException("""
-                you cannot pass the limit,
-                please upgrade your account
-                """
+                    you cannot pass the limit,
+                    please upgrade your account
+                    """
             );
         }
 
         creditCardRepository.incrAmount(
                 agency.getCreditCard().getCreditCardNumber()
-                ,amount
+                , amount
         );
 
         paymentRepository.feedAccount(
@@ -175,10 +182,12 @@ public class PaymentService {
         );
     }
 
-    public OperationDto payDonation(AddDonationRequest donationRequest) {
+    public OperationDto payDonation(PayDonationRequest donationRequest) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         ma.ensa.ebanking.models.Service service = serviceRepository.findById(donationRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
+        if (!service.getType().equals(ServiceType.DONATION))
+            throw new ServiceNotCompatibleException("the service is not a donation service");
 
 
         Agency agency = service.getAgency();
@@ -202,16 +211,24 @@ public class PaymentService {
         return OperationMapper.toDto(operationRepository.save(operation));
     }
 
-    public OperationDto payRecharge(AddRechargeRequest rechargeRequest) {
+
+    public OperationDto payRecharge(PayRechargeRequest rechargeRequest) {
+
+        if (!RechargeAmount.checkAmountIsValid(rechargeRequest.getAmount())) {
+            throw new RechargeAmountNotSupportedException("Recharge amount : " + rechargeRequest.getAmount() + " not supported");
+        }
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         ma.ensa.ebanking.models.Service service = serviceRepository.findById(rechargeRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
+        if (!service.getType().equals(ServiceType.RECHARGE))
+            throw new ServiceNotCompatibleException("the service is not a recharge service");
+        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
 
         Agency agency = service.getAgency();
 
         try {
-            transfer(agency, rechargeRequest.getAmount().getAmount());
+            transfer(agency, rechargeRequest.getAmount());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -220,15 +237,16 @@ public class PaymentService {
         Operation operation = Operation.builder()
                 .service(service)
                 .client(client)
-                .amount(rechargeRequest.getAmount().getAmount())
+                .amount(rechargeRequest.getAmount())
                 .operationStatus(OperationStatus.PAID)
                 .operationTime(LocalDateTime.now())
                 .build();
         return OperationMapper.toDto(operationRepository.save(operation));
     }
 
-    public OperationDto payBill(PayBillRequest payBillRequest) {
-        Operation operation = operationRepository.findById(payBillRequest.getOperationId()).orElseThrow();
+    public OperationDto payBill(Long operationId) {
+        Operation operation = operationRepository.findByIdAndOperationStatus(operationId, OperationStatus.UNPAID).orElse(null);
+        if (operation == null) return null;
         try {
             transfer(operation.getService().getAgency(), operation.getAmount());
         } catch (Exception e) {
@@ -239,6 +257,10 @@ public class PaymentService {
         operation.setOperationTime(LocalDateTime.now());
 
         return OperationMapper.toDto(operationRepository.save(operation));
+    }
+
+    public List<OperationDto> payBills(PayBillsRequest payBillsRequest) {
+        return payBillsRequest.getOperationsIds().stream().map(this::payBill).filter(Objects::nonNull).toList();
     }
 
 }
