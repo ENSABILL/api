@@ -29,7 +29,7 @@ public class Client extends User {
     private String dob;
 
     @ManyToOne
-    private Agent verifiedBy;
+    private User verifiedBy;
 
     @OneToOne(mappedBy = "client")
     private PaymentAccount account;

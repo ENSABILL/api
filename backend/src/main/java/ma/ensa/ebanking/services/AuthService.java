@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.Random;
 
 
@@ -174,6 +173,14 @@ public class AuthService {
         public static Agent getAgent() throws Exception {
             try {
                 return (Agent) getUser();
+            } catch (ClassCastException e) {
+                throw new PermissionException();
+            }
+        }
+
+        public static Admin getAdmin() throws Exception {
+            try {
+                return (Admin) getUser();
             } catch (ClassCastException e) {
                 throw new PermissionException();
             }

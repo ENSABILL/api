@@ -1,0 +1,83 @@
+{
+	"info": {
+		"_postman_id": "7e224df9-29a2-491a-ae89-b69a00eb905e",
+		"name": "services (aka: creanciers)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20859692"
+	},
+	"item": [
+		{
+			"name": "get all services",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMzQ1IiwiaWF0IjoxNjg1ODUyNDczLCJleHAiOjE2ODU4NTYwNzN9.2t_5wqLD2NLCFv0ClYw5VA-nWrjlWQsyLIRmvEGlmjU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/service",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add service (admin + agent)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMzQ1IiwiaWF0IjoxNjg1OTIwMjQxLCJleHAiOjE2ODU5MjM4NDF9.a5kXp3NtJZt5D84D7DzQ3NzEej60G3RsPINFcwsN3Eo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"IAM FACTURES\",\r\n    \"type\": \"RECHARGE\",\r\n    \"products\": [\r\n        \"Paiement RECHARGES INTERNET\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/agency/I12/service",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"agency",
+						"I12",
+						"service"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

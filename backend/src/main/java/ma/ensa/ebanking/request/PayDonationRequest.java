@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.ensa.ebanking.enums.RechargeAmount;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class AddRechargeRequest {
-    private String clientId;
+public class PayDonationRequest {
     private String serviceId;
-    private RechargeAmount amount;
+    private Float amount;
 }
