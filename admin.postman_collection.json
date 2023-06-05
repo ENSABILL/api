@@ -45,7 +45,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWR1c2VybmFtZSIsImlhdCI6MTY4NTI5OTM4NSwiZXhwIjoxNjg1MzAyOTg1fQ.rRx9768-BHxk9m2PtEqogDJlWYDPziEaZvXRe3TbnWw",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWR1c2VybmFtZSIsImlhdCI6MTY4NTkxOTkxNCwiZXhwIjoxNjg1OTIzNTE0fQ.E39HTcJD7dN6zkp6UXa4kqv-kc1WqMeHqvAMs-Xz9rE",
 							"type": "string"
 						}
 					]
@@ -54,7 +54,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"agent123@gmail.com\",\r\n    \"phoneNumber\": \"212612218950\",\r\n    \"username\": \"agent123\",\r\n    \"firstName\": \"agent\",\r\n    \"lastName\": \"1\"\r\n}",
+					"raw": "{\r\n    \"email\": \"agent12345@gmail.com\",\r\n    \"phoneNumber\": \"212612218950\",\r\n    \"username\": \"agent12345\",\r\n    \"firstName\": \"agent\",\r\n    \"lastName\": \"1\",\r\n    \"agencyImmId\": \"I12\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -72,6 +72,120 @@
 						"api",
 						"v1",
 						"agent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create agency",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWR1c2VybmFtZSIsImlhdCI6MTY4NTkxOTkxNCwiZXhwIjoxNjg1OTIzNTE0fQ.E39HTcJD7dN6zkp6UXa4kqv-kc1WqMeHqvAMs-Xz9rE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"INWI\",\r\n    \"immId\": \"I12\", // numero d'immatriculation\r\n    \"patentId\": \"k12\", // numero de patente\r\n    \"image\": \"https://upload.wikimedia.org/wikipedia/commons/e/ef/Logo_inwi.svg\" // image link\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/agency",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"agency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "accept client",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWR1c2VybmFtZSIsImlhdCI6MTY4NTkxNDE1MSwiZXhwIjoxNjg1OTE3NzUxfQ.gBMveg1xQLfXdl7sfXotglxP0sct7oxFIHIdky2Dolk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/client/reda123/verify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"client",
+						"reda123",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create client",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWR1c2VybmFtZSIsImlhdCI6MTY4NTkxOTkxNCwiZXhwIjoxNjg1OTIzNTE0fQ.E39HTcJD7dN6zkp6UXa4kqv-kc1WqMeHqvAMs-Xz9rE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"client1@gmail.com\",\r\n    \"dob\": \"2001/28/09\",\r\n    \"cin\": \"e11221\",\r\n    \"firstName\": \"client\",\r\n    \"lastName\": \"1\",\r\n    \"phoneNumber\": \"212612218950\",\r\n    \"username\": \"client1\",\r\n    \"accountLimit\": \"ACC_20K\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/client/add-account",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"client",
+						"add-account"
 					]
 				}
 			},

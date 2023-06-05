@@ -1,0 +1,269 @@
+{
+	"info": {
+		"_postman_id": "a3079a0e-1e4c-4e15-b1bb-61549028d259",
+		"name": "operations",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20859692"
+	},
+	"item": [
+		{
+			"name": "get all clients bills (agent)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMzQ1IiwiaWF0IjoxNjg1OTM1OTQwLCJleHAiOjE2ODU5Mzk1NDB9.99vWAOHclDHm20sczTs6jp8gSyRjcqDBOayYwlffvuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/operation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"operation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add facture to client (agent)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMzQ1IiwiaWF0IjoxNjg1OTM1OTQwLCJleHAiOjE2ODU5Mzk1NDB9.99vWAOHclDHm20sczTs6jp8gSyRjcqDBOayYwlffvuw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clientUsername\": \"client1\",\r\n    \"serviceId\": \"c24d6c1b-ecc1-4ef5-8686-ddfab93f1c55\",\r\n    \"amount\": 500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/operation/bill",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"operation",
+						"bill"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get client unpaid bills (client)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnQxIiwiaWF0IjoxNjg1OTM2NjE1LCJleHAiOjE2ODU5NDAyMTV9.oRg2yfUo3nV-VXrzEmZ0qqrQgUfKKUu939T-Nsuciag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/operation/unpaidBills",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"operation",
+						"unpaidBills"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pay factures",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnQxIiwiaWF0IjoxNjg1OTMyNTUxLCJleHAiOjE2ODU5MzYxNTF9.5UWkgfqetkgabEDSOVZmNERQuH-ww0C5Qt8ylodwGkk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"operationsIds\": [\r\n        \"1\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/operation/pay-bills",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"operation",
+						"pay-bills"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pay recharge",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnQxIiwiaWF0IjoxNjg1OTM2NjE1LCJleHAiOjE2ODU5NDAyMTV9.oRg2yfUo3nV-VXrzEmZ0qqrQgUfKKUu939T-Nsuciag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serviceId\": \"c24d6c1b-ecc1-4ef5-8686-ddfab93f1c55\",\r\n    \"amount\": 500\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/operation/pay-recharge",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"operation",
+						"pay-recharge"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pay donation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnQxIiwiaWF0IjoxNjg1OTM2NjE1LCJleHAiOjE2ODU5NDAyMTV9.oRg2yfUo3nV-VXrzEmZ0qqrQgUfKKUu939T-Nsuciag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serviceId\": \"c24d6c1b-ecc1-4ef5-8686-ddfab93f1c55\",\r\n    \"amount\": 100\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/operation/pay-donation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"operation",
+						"pay-donation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get paid operations (client)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnQxIiwiaWF0IjoxNjg1OTM2NjE1LCJleHAiOjE2ODU5NDAyMTV9.oRg2yfUo3nV-VXrzEmZ0qqrQgUfKKUu939T-Nsuciag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/operation/paidBills",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"operation",
+						"paidBills"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
