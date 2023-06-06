@@ -7,16 +7,22 @@ import ma.ensa.ebanking.dto.auth.ClientRequest;
 import ma.ensa.ebanking.exceptions.EmailNotAvailableException;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.mapper.ClientMapper;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
+import ma.ensa.ebanking.request.UpdateClientRequest;
+import ma.ensa.ebanking.request.UpdatePasswordRequest;
 import ma.ensa.ebanking.utils.PasswordUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static ma.ensa.ebanking.services.AuthService.Auths;
 
@@ -117,6 +123,50 @@ public class ClientService {
         ClientDto clientDto = new ClientDto();
         BeanUtils.copyProperties(client, clientDto);
         return clientDto;
+    }
+
+    public double checkBalance() throws Exception {
+        Client client = AuthService.Auths.getClient();
+        return client.getAccount().getBalance();
+    }
+
+    public List<ClientDto> getAllClients(){
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        return clientRepository.findAll().stream().map(ClientMapper::toDto).collect(Collectors.toList());
+    }
+
+    public void deleteClient(String id){
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        clientRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Client not found"));
+        clientRepository.deleteById(id);
+    }
+
+    public ClientDto updateClient(UpdateClientRequest updateClientRequest) throws Exception {
+        Client client = AuthService.Auths.getClient();
+
+        if(!clientRepository.existsByEmail(updateClientRequest.getEmail())){
+            throw new RuntimeException("Email already exists");
+        }
+
+        if(!clientRepository.existsByUsername(updateClientRequest.getUsername())){
+            throw new RuntimeException("Username already exists");
+        }
+
+        client.setEmail(Objects.requireNonNullElse(updateClientRequest.getEmail(),client.getEmail()));
+        client.setUsername(Objects.requireNonNullElse(updateClientRequest.getUsername(),client.getUsername()));
+        return ClientMapper.toDto(clientRepository.save(client));
+    }
+
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest) throws Exception {
+        Client client = AuthService.Auths.getClient();
+        boolean oldPasswordMatches = passwordEncoder.matches(updatePasswordRequest.getOldPassword(), client.getPassword());
+        if (!oldPasswordMatches) {
+            throw new RuntimeException("The old password is incorrect");
+        }
+        String encodedPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+        client.setPassword(encodedPassword);
+
+        clientRepository.save(client);
     }
 
 }

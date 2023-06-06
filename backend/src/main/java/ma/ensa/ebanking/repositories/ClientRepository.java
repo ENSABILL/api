@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface ClientRepository extends JpaRepository<Client, Long> {
+public interface ClientRepository extends JpaRepository<Client, String> {
 
 
     @Modifying
@@ -26,5 +26,8 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     );
 
     Optional<Client> findByUsername(String username);
+
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
 
 }
