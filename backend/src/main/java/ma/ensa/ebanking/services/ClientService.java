@@ -5,8 +5,8 @@ import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.InitialPasswordDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
 import ma.ensa.ebanking.exceptions.EmailNotAvailableException;
+import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
-import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.ClientRepository;
@@ -32,12 +32,16 @@ public class ClientService {
 
     public void createClient(ClientRequest request, boolean verify) throws Exception {
 
-        Agent agent = (verify) ? Auths.getAgent() : null;
+        User verifiedBy = null;
+        if (verify) {
+            if (Auths.checkAdmin()) verifiedBy = Auths.getAdmin();
+            if (Auths.checkAgent()) verifiedBy = Auths.getAgent();
+        }
 
         // check the availability of username and email
         if (
                 userRepository.existsByUsername(request.getUsername()) &&
-                userRepository.existsByEmail(request.getEmail())
+                        userRepository.existsByEmail(request.getEmail())
         )
             throw new EmailNotAvailableException();
 
@@ -52,7 +56,7 @@ public class ClientService {
                 .lastName(request.getLastName())
                 .desiredAccountLimit(request.getDesiredAccountLimit())
                 .username(request.getUsername())
-                .verifiedBy(agent)
+                .verifiedBy(verifiedBy)
                 .build();
 
         if (verify) {
@@ -63,7 +67,6 @@ public class ClientService {
                     .phoneNumber(request.getPhoneNumber())
                     .password(generatedPassword)
                     .build();
-            System.out.println(generatedPassword);
             twilioOTPService.sendInitialPassword(dto);
         }
 
@@ -75,9 +78,14 @@ public class ClientService {
     }
 
     public void verifyAccount(String username) throws Exception {
+        boolean checkAdmin = Auths.checkAdmin();
+        boolean checkAgent = Auths.checkAgent();
+        if (!checkAdmin && !checkAgent) throw new PermissionException();
 
+        User verifiedBy = null;
         // check permission
-        Agent agent = Auths.getAgent();
+        if (checkAdmin) verifiedBy = Auths.getAdmin();
+        if (checkAgent) verifiedBy = Auths.getAgent();
 
         // get the client
         User user = userRepository
@@ -92,7 +100,7 @@ public class ClientService {
                 .password(generatedPassword)
                 .build();
         // set verified
-        clientRepository.setVerified(username, agent, passwordEncoder.encode(generatedPassword));
+        clientRepository.setVerified(username, verifiedBy, passwordEncoder.encode(generatedPassword));
         // send generated password
         twilioOTPService.sendInitialPassword(dto);
         // create a payment account for the client

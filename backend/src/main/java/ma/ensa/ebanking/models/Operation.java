@@ -22,7 +22,7 @@ public class Operation {
     private Float amount;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private ServiceProduct serviceProduct;
+    private Service service;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Client client;

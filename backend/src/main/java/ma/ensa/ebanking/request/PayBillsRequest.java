@@ -4,14 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ma.ensa.ebanking.enums.RechargeAmount;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class AddRechargeRequest {
-    private String clientId;
-    private String serviceId;
-    private RechargeAmount amount;
+public class PayBillsRequest {
+    private List<Long> operationsIds = new ArrayList<>();
+    private String token;
 }

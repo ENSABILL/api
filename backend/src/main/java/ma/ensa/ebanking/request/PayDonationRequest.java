@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class AddDonationRequest {
+public class PayDonationRequest {
     private String serviceId;
     private Float amount;
+    private String token;
 }

@@ -14,7 +14,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMyIsImlhdCI6MTY4NTMwMDk1NywiZXhwIjoxNjg1MzA0NTU3fQ.hTJSpssixxAM6h_ovtbbJXdc5HLlLmix3wS7p9_405Q",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMzQiLCJpYXQiOjE2ODU4NDEyMTEsImV4cCI6MTY4NTg0NDgxMX0.TVsOipo_2A-9vnNAyai_kblJK-20dyprCyAxJ44vP9Q",
 							"type": "string"
 						}
 					]
@@ -22,7 +22,7 @@
 				"method": "PUT",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8081/api/v1/client/client2/verify",
+					"raw": "http://localhost:8081/api/v1/client/reda123/verify",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -32,7 +32,7 @@
 						"api",
 						"v1",
 						"client",
-						"client2",
+						"reda123",
 						"verify"
 					]
 				}
@@ -47,7 +47,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMyIsImlhdCI6MTY4NTMwMDk1NywiZXhwIjoxNjg1MzA0NTU3fQ.hTJSpssixxAM6h_ovtbbJXdc5HLlLmix3wS7p9_405Q",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZ2VudDEyMzQiLCJpYXQiOjE2ODU4NDEyMTEsImV4cCI6MTY4NTg0NDgxMX0.TVsOipo_2A-9vnNAyai_kblJK-20dyprCyAxJ44vP9Q",
 							"type": "string"
 						}
 					]
@@ -56,7 +56,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"client1@gmail.com\",\r\n    \"dob\": \"2001/28/09\",\r\n    \"cin\": \"e11221\",\r\n    \"firstName\": \"client\",\r\n    \"lastName\": \"1\",\r\n    \"phoneNumber\": \"212612218950\",\r\n    \"username\": \"client1\"\r\n}",
+					"raw": "{\r\n    \"email\": \"client1@gmail.com\",\r\n    \"dob\": \"2001/28/09\",\r\n    \"cin\": \"e11221\",\r\n    \"firstName\": \"client\",\r\n    \"lastName\": \"1\",\r\n    \"phoneNumber\": \"212612218950\",\r\n    \"username\": \"client1\",\r\n    \"accountLimit\": \"ACC_20K\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -87,7 +87,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"agent123\",\r\n    \"password\": \"newpass\"\r\n}",
+					"raw": "{\r\n    \"username\": \"agent12345\",\r\n    \"password\": \"tIV*WB\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

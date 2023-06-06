@@ -3,6 +3,7 @@ package ma.ensa.ebanking.repositories;
 import jakarta.transaction.Transactional;
 import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.user.Client;
+import ma.ensa.ebanking.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,10 +18,10 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
 
     @Modifying
-    @Query("UPDATE Client c SET c.verifiedBy = :agent, c.password = :password, c.enabled = true WHERE c.username = :username")
+    @Query("UPDATE Client c SET c.verifiedBy = :agentOrAdmin, c.password = :password, c.enabled = true WHERE c.username = :username")
     void setVerified(
             @Param("username") String username,
-            @Param("agent") Agent agent,
+            @Param("agentOrAdmin") User agentOrAdmin,
             @Param("password") String generatedPassword
     );
 
