@@ -147,4 +147,10 @@ public class AgencyService {
 
     }
 
+    public void deleteAgency(String id){
+        if(!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        agencyRepository.findById(id).orElseThrow(()->new RecordNotFoundException("Agency not found"));
+        agencyRepository.deleteById(id);
+    }
+
 }

@@ -1,13 +1,18 @@
 package ma.ensa.ebanking.controllers;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
 import ma.ensa.ebanking.dto.auth.UsernameDto;
+import ma.ensa.ebanking.request.UpdateClientRequest;
+import ma.ensa.ebanking.request.UpdatePasswordRequest;
 import ma.ensa.ebanking.services.ClientService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/client")
@@ -44,5 +49,36 @@ public class ClientController {
         return clientService
                 .getClient(dto.getUsername());
     }
+
+    @GetMapping("/balance")
+    @ResponseStatus(HttpStatus.OK)
+    public double checkBalance() throws Exception {
+        return clientService.checkBalance();
+    }
+
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ClientDto> getAllClients(){
+        return clientService.getAllClients();
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteClients(@RequestBody String id){
+        clientService.deleteClient(id);
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ClientDto updateClient(@RequestBody UpdateClientRequest updateClientRequest) throws Exception {
+        return clientService.updateClient(updateClientRequest);
+    }
+
+    @PutMapping("/password")
+    @ResponseStatus(HttpStatus.OK)
+    public void updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) throws Exception {
+        clientService.updatePassword(updatePasswordRequest);
+    }
+
 
 }
