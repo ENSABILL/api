@@ -5,6 +5,7 @@ import com.twilio.Twilio;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.config.TwilioConfig;
+import ma.ensa.ebanking.enums.OrderStatus;
 import ma.ensa.ebanking.models.CreditCard;
 import ma.ensa.ebanking.models.user.Admin;
 import ma.ensa.ebanking.models.user.User;
@@ -38,6 +39,7 @@ public class MainApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);
+
     }
 
     @Override

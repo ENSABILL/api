@@ -26,6 +26,6 @@ public class ServiceProduct {
 
 
     //@OneToMany(mappedBy = "serviceProduct")
-    //private List<Operation> operations;
+    //private List<Operation> operations = new ArrayList<>();
 
 }

@@ -40,7 +40,11 @@ public class TwilioOTPService {
         PhoneNumber from = new PhoneNumber(config.getTrialPhoneNumber()),
                 to = new PhoneNumber(dto.getPhoneNumber());
 
-        String body = String.format(" dear %s, your initial password is : %s . Dont forget to change it after sign in.",
+        String body = String.format(
+                """
+                dear %s, your initial password is : %s
+                dont forget to change it after sign in
+                """,
                 dto.getUsername(),
                 dto.getPassword()
         );

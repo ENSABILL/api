@@ -34,8 +34,8 @@ public class Client extends User {
     @OneToOne(mappedBy = "client")
     private PaymentAccount account;
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
-    List<Operation> operations = new ArrayList<>();
+    @OneToMany(mappedBy = "client")
+    List<Operation> operations;
 
     @Enumerated(EnumType.STRING)
     private AccountLimit desiredAccountLimit;

@@ -11,7 +11,11 @@ public class ProductDto {
 
     private String name;
 
+    private String imageUrl;
+
     private String agencyName;
+
+    private String description;
 
     private int qte;
 

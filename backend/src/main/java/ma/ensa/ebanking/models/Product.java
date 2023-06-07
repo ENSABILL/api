@@ -31,13 +31,16 @@ public class Product {
 
     private String imageUrl;
 
+    @Column(length = 2047)
+    private String description;
+
     @ManyToOne
     private Agency agency;
 
     @CreationTimestamp
     private LocalDateTime addedAt;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<ProductOrder> orderList;
 
 

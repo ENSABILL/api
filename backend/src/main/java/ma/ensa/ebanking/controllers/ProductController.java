@@ -19,18 +19,18 @@ public class ProductController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<ProductDto> getAllProduct(@RequestParam(required = false) String imm){
-
-        return imm == null ?
-                service.getAllProducts()
-                : service.getAllProductsByAgency(imm);
+        return service.getAllProducts(imm);
     }
 
-
-
+    @GetMapping("/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDto getProduct(@PathVariable String productId){
+        return service.getProduct(productId);
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String addProduct(@RequestBody ProductDto dto) throws Exception{
+    public String addProduct(@RequestBody ProductDto dto){
 
         String productId = service.addProduct(dto);
 
@@ -52,4 +52,6 @@ public class ProductController {
                 """, productId
         );
     }
+
+
 }

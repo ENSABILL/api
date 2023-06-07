@@ -31,4 +31,9 @@ public class ProductOrder {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @PrePersist
+    public void init(){
+        orderStatus = OrderStatus.PENDING;
+    }
 }

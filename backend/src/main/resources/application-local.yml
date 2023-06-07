@@ -3,13 +3,16 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/test?createDatabaseIfNotExist=true
     username: root
-    password:
+    password: 159632
   jpa:
     database: mysql
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+    properties:
+      hibernate:
+        show_sql: true
 
 
 server:

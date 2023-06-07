@@ -1,7 +1,8 @@
 package ma.ensa.ebanking.enums;
 
 public enum OrderStatus {
-    ARRIVED,
+    PENDING,
     PROCESSING,
-    DELIVERED
+    DELIVERED,
+    CANCELLED
 }

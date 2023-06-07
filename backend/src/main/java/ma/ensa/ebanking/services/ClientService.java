@@ -42,13 +42,13 @@ public class ClientService {
         User verifiedBy = null;
         if (verify) {
             if (Auths.checkAdmin()) verifiedBy = Auths.getAdmin();
-            if (Auths.checkAgent()) verifiedBy = Auths.getAgent();
+            else if (Auths.checkAgent()) verifiedBy = Auths.getAgent();
         }
 
         // check the availability of username and email
         if (
                 userRepository.existsByUsername(request.getUsername()) &&
-                        userRepository.existsByEmail(request.getEmail())
+                userRepository.existsByEmail(request.getEmail())
         )
             throw new EmailNotAvailableException();
 

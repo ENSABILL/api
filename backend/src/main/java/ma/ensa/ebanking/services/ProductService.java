@@ -18,13 +18,16 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    public List<ProductDto> getAllProducts(){
+    public List<ProductDto> getAllProducts(String imm){
 
         // check the authentication
         AuthService.Auths.getUser();
 
-        return repository
-                .findAll()
+        List<Product> products = imm == null ?
+                repository.findAll() :
+                repository.findAllByAgency_Imm(imm);
+
+        return products
                 .stream()
                 .map(
                       product -> ProductDto.builder()
@@ -37,26 +40,7 @@ public class ProductService {
                 ).toList();
     }
 
-    public List<ProductDto> getAllProductsByAgency(String imm){
-
-        AuthService.Auths.getUser();
-
-        return repository
-                .findAllByAgency_Imm(imm)
-                .stream()
-                .map(
-                        product -> ProductDto.builder()
-                                .id(product.getId())
-                                .name(product.getName())
-                                .price(product.getPrice())
-                                .agencyName(product.getAgency().getName())
-                                .qte(product.getQte())
-                                .build()
-                ).toList();
-
-    }
-
-    public String addProduct(ProductDto dto) throws Exception{
+    public String addProduct(ProductDto dto){
 
         Agent agent = AuthService.Auths.getAgent();
 
@@ -64,6 +48,8 @@ public class ProductService {
                 .name(dto.getName())
                 .qte(dto.getQte())
                 .price(dto.getPrice())
+                .imageUrl(dto.getImageUrl())
+                .description(dto.getDescription())
                 .agency(agent.getAgency())
                 .build();
 
@@ -92,4 +78,23 @@ public class ProductService {
     }
 
 
+    public ProductDto getProduct(String productId) {
+
+        AuthService.Auths.getUser();
+
+        Product product = repository
+                .findById(productId)
+                .orElseThrow(
+                        () -> new RecordNotFoundException("product not found")
+                );
+
+        return ProductDto.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .agencyName(product.getAgency().getName())
+                .qte(product.getQte())
+                .build();
+
+    }
 }

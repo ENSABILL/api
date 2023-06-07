@@ -155,7 +155,7 @@ public class PaymentService {
         );
     }
 
-    public void transfer(Agency agency, double amount) throws Exception {
+    public void transfer(Agency agency, double amount) {
 
         PaymentAccount account = AuthService.Auths
                 .getClient()
@@ -205,7 +205,7 @@ public class PaymentService {
                 .operationStatus(OperationStatus.PAID)
                 .operationTime(LocalDateTime.now())
                 .build();
-        client.getOperations().add(operation);
+        //client.getOperations().add(operation);
         service.getOperations().add(operation);
         return OperationMapper.toDto(operationRepository.save(operation));
     }

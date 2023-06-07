@@ -176,7 +176,7 @@ public class AuthService {
             return agent.getAgency().getImm().equals(agencyImm);
         }
 
-        public static Agent getAgent() throws Exception {
+        public static Agent getAgent() {
             try {
                 return (Agent) getUser();
             } catch (ClassCastException e) {
@@ -193,7 +193,7 @@ public class AuthService {
         }
 
         // TODO: for payment, transfer, ... etc
-        public static Client getClient() throws Exception {
+        public static Client getClient() throws RuntimeException {
             try {
                 return (Client) getUser();
             } catch (ClassCastException e) {
