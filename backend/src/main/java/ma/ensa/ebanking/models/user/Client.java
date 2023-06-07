@@ -23,8 +23,8 @@ import java.util.List;
 @Entity
 public class Client extends User {
 
-    @Column(unique = true, nullable = false)
-    private String CIN;
+    @Column(nullable = false)
+    private String cin;
 
     private String dob;
 
