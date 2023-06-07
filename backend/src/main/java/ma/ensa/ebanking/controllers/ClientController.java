@@ -43,11 +43,11 @@ public class ClientController {
         return "account registered successfully";
     }
 
-    @GetMapping
+    @GetMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
-    public ClientDto getClient(@RequestBody ClientDto dto) throws Exception{
+    public ClientDto getClient(@PathVariable String username) throws Exception{
         return clientService
-                .getClient(dto.getUsername());
+                .getClient(username);
     }
 
     @GetMapping("/balance")
