@@ -18,9 +18,15 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDto> getAllProduct(){
-        return service.getAllProducts();
+    public List<ProductDto> getAllProduct(@RequestParam(required = false) String imm){
+
+        return imm == null ?
+                service.getAllProducts()
+                : service.getAllProductsByAgency(imm);
     }
+
+
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

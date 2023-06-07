@@ -20,6 +20,9 @@ public class ProductService {
 
     public List<ProductDto> getAllProducts(){
 
+        // check the authentication
+        AuthService.Auths.getUser();
+
         return repository
                 .findAll()
                 .stream()
@@ -32,6 +35,25 @@ public class ProductService {
                               .qte(product.getQte())
                               .build()
                 ).toList();
+    }
+
+    public List<ProductDto> getAllProductsByAgency(String imm){
+
+        AuthService.Auths.getUser();
+
+        return repository
+                .findAllByAgency_Imm(imm)
+                .stream()
+                .map(
+                        product -> ProductDto.builder()
+                                .id(product.getId())
+                                .name(product.getName())
+                                .price(product.getPrice())
+                                .agencyName(product.getAgency().getName())
+                                .qte(product.getQte())
+                                .build()
+                ).toList();
+
     }
 
     public String addProduct(ProductDto dto) throws Exception{
@@ -51,9 +73,7 @@ public class ProductService {
 
     }
 
-    public void deleteProduct(String productId) throws Exception{
-
-        Agent agent = AuthService.Auths.getAgent();
+    public void deleteProduct(String productId){
 
         Product product = repository
                 .findById(productId)
@@ -61,12 +81,15 @@ public class ProductService {
                         () -> new RecordNotFoundException("product not found")
                 );
 
-        if(!product.getAgency().getImm().equals(agent.getAgency().getImm())){
+        String agencyImm = product.getAgency().getImm();
+
+        if(AuthService.Auths.checkAgentBelongsToAgency(agencyImm)){
             throw new PermissionException();
         }
 
         repository.delete(product);
 
     }
+
 
 }
