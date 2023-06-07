@@ -23,8 +23,8 @@ import java.util.List;
 @Entity
 public class Client extends User {
 
-    @Column(unique = true, nullable = false)
-    private String CIN;
+    @Column(nullable = false)
+    private String cin;
 
     private String dob;
 
@@ -34,7 +34,7 @@ public class Client extends User {
     @OneToOne(mappedBy = "client")
     private PaymentAccount account;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     List<Operation> operations = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

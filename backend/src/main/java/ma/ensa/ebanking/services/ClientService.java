@@ -55,7 +55,7 @@ public class ClientService {
         Client client = Client.builder()
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
-                .CIN(request.getCin())
+                .cin(request.getCin())
                 .dob(request.getDob())
                 .enabled(verify)
                 .firstLogin(true)
@@ -66,6 +66,7 @@ public class ClientService {
                 .verifiedBy(verifiedBy)
                 .build();
 
+        clientRepository.save(client);
         if (verify) {
             String generatedPassword = PasswordUtil.generateRandomPassword(6);
             client.setPassword(passwordEncoder.encode(generatedPassword));
@@ -76,9 +77,6 @@ public class ClientService {
                     .build();
             twilioOTPService.sendInitialPassword(dto);
         }
-
-        clientRepository.save(client);
-
         if (verify) {
             paymentService.createAccount(client, request.getDesiredAccountLimit());
         }
@@ -134,6 +132,11 @@ public class ClientService {
     public List<ClientDto> getAllClients(){
         if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
         return clientRepository.findAll().stream().map(ClientMapper::toDto).collect(Collectors.toList());
+    }
+
+    public List<ClientDto> getNonVerifiedClients(){
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        return clientRepository.findAll().stream().filter(client -> !client.isEnabled()).map(ClientMapper::toDto).collect(Collectors.toList());
     }
 
     public void deleteClient(String id){

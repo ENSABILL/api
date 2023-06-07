@@ -31,10 +31,10 @@ public class Service {
     @ManyToOne
     private Agency agency;
 
-    @OneToMany(mappedBy = "service",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "service",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<ServiceProduct> products = new ArrayList<>();
 
-    @OneToMany(mappedBy = "service")
+    @OneToMany(mappedBy = "service", fetch = FetchType.EAGER)
     private List<Operation> operations = new ArrayList<>();
 
     @PrePersist

@@ -80,5 +80,11 @@ public class ClientController {
         clientService.updatePassword(updatePasswordRequest);
     }
 
+    @GetMapping("/nonVerifiedClients")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ClientDto> getNonVerifiedClients(){
+        return clientService.getNonVerifiedClients();
+    }
+
 
 }

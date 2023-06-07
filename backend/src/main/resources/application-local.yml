@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/test?createDatabaseIfNotExist=true
     username: root
-    password: 159632
+    password:
   jpa:
     database: mysql
     hibernate:
@@ -17,7 +17,7 @@ server:
 
 jwt:
   secret-key: 70655367566B5970347336763979244226452948404D635166546A576D5A7164
-  duration: 60
+  duration: 1440
 
 twilio:
   account-sid: AC2e6a7c5d18e16fead92005b1369f3e58
