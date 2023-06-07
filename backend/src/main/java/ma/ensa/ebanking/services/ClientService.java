@@ -14,6 +14,7 @@ import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import ma.ensa.ebanking.request.UpdateClientRequest;
 import ma.ensa.ebanking.request.UpdatePasswordRequest;
+import ma.ensa.ebanking.services.utils.TwilioOTPService;
 import ma.ensa.ebanking.utils.PasswordUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;

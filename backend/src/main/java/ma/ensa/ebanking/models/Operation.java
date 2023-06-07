@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.models.user.Client;
+import ma.ensa.ebanking.services.ProductService;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +17,8 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 public class Operation {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Float amount;

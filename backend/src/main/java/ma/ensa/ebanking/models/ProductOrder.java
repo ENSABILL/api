@@ -5,27 +5,30 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ma.ensa.ebanking.enums.OrderStatus;
+import ma.ensa.ebanking.models.user.Client;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServiceProduct {
+
+@Entity
+
+public class ProductOrder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String name;
+    @ManyToOne
+    private Client client;
 
     @ManyToOne
-    private Service service;
+    private Product product;
 
+    private int qte;
 
-    //@OneToMany(mappedBy = "serviceProduct")
-    //private List<Operation> operations;
-
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 }

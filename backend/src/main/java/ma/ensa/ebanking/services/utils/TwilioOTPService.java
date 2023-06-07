@@ -1,4 +1,4 @@
-package ma.ensa.ebanking.services;
+package ma.ensa.ebanking.services.utils;
 
 
 import com.twilio.rest.api.v2010.account.Message;
