@@ -1,19 +1,25 @@
 package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
+import ma.ensa.ebanking.dto.AgentDto;
 import ma.ensa.ebanking.dto.InitialPasswordDto;
 import ma.ensa.ebanking.dto.auth.AgentRequest;
 import ma.ensa.ebanking.exceptions.EmailNotAvailableException;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.mapper.AgentMapper;
 import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.AgencyRepository;
+import ma.ensa.ebanking.repositories.AgentRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import ma.ensa.ebanking.utils.PasswordUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class AgentService {
     private final AgencyRepository agencyRepository;
     private final PasswordEncoder passwordEncoder;
     private final TwilioOTPService twilioOTPService;
+    private final AgentRepository agentRepository;
 
     public void createAgent(AgentRequest request) throws Exception {
 
@@ -65,6 +72,19 @@ public class AgentService {
         twilioOTPService.sendInitialPassword(dto);
         userRepository.save(agent);
 
+    }
+
+    public List<AgentDto> getAllAgents(){
+
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
+
+        return agentRepository.findAll().stream().map(AgentMapper::toDto).collect(Collectors.toList());
+    }
+
+    public void deleteAgent(String id){
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        agentRepository.findById(id).orElseThrow(()->new RecordNotFoundException("Agent Not Found."));
+        agentRepository.deleteById(id);
     }
 
 }
