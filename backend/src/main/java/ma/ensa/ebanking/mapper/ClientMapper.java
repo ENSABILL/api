@@ -8,7 +8,7 @@ public class ClientMapper {
         return ClientDto.builder()
                 .id(client.getId())
                 .account(client.getAccount())
-                .cin(client.getCIN())
+                .cin(client.getCin())
                 .email(client.getEmail())
                 .fullName(client.getFullName())
                 .phoneNumber(client.getPhoneNumber())

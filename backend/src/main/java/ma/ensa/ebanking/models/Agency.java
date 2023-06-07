@@ -30,10 +30,10 @@ public class Agency {
 
     private String image;
 
-    @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Service> services;
 
-    @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "agency", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Agent> agents = new ArrayList<>();
 
     public void showActiveServicesOnly() {
