@@ -18,10 +18,7 @@ public class OrderController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getAllOrders(){
-
-
         return service.getAllOrders();
-
     }
 
     @PostMapping("/all")
@@ -43,7 +40,7 @@ public class OrderController {
         );
     }
 
-    @PutMapping("/update_status")
+    @PutMapping("/update-status")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public String updateStatus(
             @RequestBody OrderDto dto
