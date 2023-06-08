@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class OperationDto {
     private Long id;
-    private Float amount;
+    private double amount;
     private OperationStatus operationStatus;
     private LocalDateTime operationTime;
     private String clientId;

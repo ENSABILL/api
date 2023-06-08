@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.models.user.Client;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -20,16 +21,20 @@ public class Operation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Float amount;
+    private double amount;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
+    private Product product;
+
+    @ManyToOne
     private Service service;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Client client;
 
     private OperationStatus operationStatus;
 
+    @CreationTimestamp
     private LocalDateTime operationTime;
 
 }

@@ -35,7 +35,7 @@ public class Service {
     private List<ServiceProduct> products = new ArrayList<>();
 
     @OneToMany(mappedBy = "service", fetch = FetchType.EAGER)
-    private List<Operation> operations = new ArrayList<>();
+    private List<Operation> operations;
 
     @PrePersist
     public void init(){

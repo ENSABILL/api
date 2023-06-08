@@ -3,13 +3,16 @@ package ma.ensa.ebanking.services;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.OrderDto;
+import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.enums.OrderStatus;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.models.Operation;
 import ma.ensa.ebanking.models.Product;
 import ma.ensa.ebanking.models.ProductOrder;
 import ma.ensa.ebanking.models.user.Admin;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.models.user.User;
+import ma.ensa.ebanking.repositories.OperationRepository;
 import ma.ensa.ebanking.repositories.OrderRepository;
 import ma.ensa.ebanking.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -26,9 +29,11 @@ public class OrderService {
 
     private final PaymentService paymentService;
 
+    private final OperationRepository operationRepository;
+
     public List<String> placeOrders(List<OrderDto> dtoList){
 
-        Client client = AuthService.Auths.getClient();
+        final Client client = AuthService.Auths.getClient();
 
         double totalAmount = 0;
 
@@ -58,10 +63,21 @@ public class OrderService {
                                 () -> new RecordNotFoundException("product not found")
                         );
 
+                double amount = dto.getOrderQte() * product.getPrice();
+
                 paymentService.transfer(
                         product.getAgency(),
-                        dto.getOrderQte() * product.getPrice()
+                        amount
                 );
+
+                Operation operation = Operation.builder()
+                        .client(client)
+                        .product(product)
+                        .amount(amount)
+                        .operationStatus(OperationStatus.PAID)
+                        .build();
+
+                operationRepository.save(operation);
 
                 ProductOrder order = ProductOrder.builder()
                         .client(client)
@@ -91,9 +107,11 @@ public class OrderService {
             throw new RuntimeException("out of stock");
         }
 
+        double amount = dto.getOrderQte() * product.getPrice();
+
         paymentService.transfer(
                 product.getAgency(),
-                dto.getOrderQte() * product.getPrice()
+                amount
         );
 
         productRepository.decrementQte(
@@ -106,6 +124,15 @@ public class OrderService {
                 .product(product)
                 .qte(dto.getOrderQte())
                 .build();
+
+        Operation operation = Operation.builder()
+                .client(client)
+                .amount(amount)
+                .product(product)
+                .operationStatus(OperationStatus.PAID)
+                .build();
+
+        operationRepository.save(operation);
 
         return orderRepository
                 .save(order)

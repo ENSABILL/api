@@ -213,7 +213,6 @@ public class PaymentService {
                 .client(client)
                 .amount(donationRequest.getAmount())
                 .operationStatus(OperationStatus.PAID)
-                .operationTime(LocalDateTime.now())
                 .build();
         //client.getOperations().add(operation);
         service.getOperations().add(operation);
