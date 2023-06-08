@@ -1,7 +1,6 @@
 package ma.ensa.ebanking.repositories;
 
 import jakarta.transaction.Transactional;
-import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

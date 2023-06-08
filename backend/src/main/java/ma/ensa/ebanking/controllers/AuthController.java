@@ -19,13 +19,13 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public AuthResponse login(@RequestBody AuthRequest request) throws Exception {
+    public AuthResponse login(@RequestBody AuthRequest request){
         return service.authenticate(request);
     }
 
     @PostMapping("/get-otp")
     @ResponseStatus(HttpStatus.CREATED)
-    public String resetPassword() throws Exception {
+    public String resetPassword() {
         return service.sendVerificationCode();
     }
 

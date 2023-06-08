@@ -1,4 +1,4 @@
-package ma.ensa.ebanking.services;
+package ma.ensa.ebanking.services.utils;
 
 
 import io.jsonwebtoken.Claims;

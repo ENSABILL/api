@@ -11,7 +11,6 @@ import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.models.Operation;
 import ma.ensa.ebanking.models.PaymentAccount;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -23,8 +22,8 @@ import java.util.List;
 @Entity
 public class Client extends User {
 
-    @Column(unique = true, nullable = false)
-    private String CIN;
+    @Column(nullable = false)
+    private String cin;
 
     private String dob;
 
@@ -35,7 +34,7 @@ public class Client extends User {
     private PaymentAccount account;
 
     @OneToMany(mappedBy = "client")
-    List<Operation> operations = new ArrayList<>();
+    List<Operation> operations;
 
     @Enumerated(EnumType.STRING)
     private AccountLimit desiredAccountLimit;

@@ -11,6 +11,8 @@ import ma.ensa.ebanking.exceptions.UnauthenticatedException;
 import ma.ensa.ebanking.models.user.*;
 import ma.ensa.ebanking.repositories.TokenRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
+import ma.ensa.ebanking.services.utils.JwtService;
+import ma.ensa.ebanking.services.utils.TwilioOTPService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -174,7 +176,7 @@ public class AuthService {
             return agent.getAgency().getImm().equals(agencyImm);
         }
 
-        public static Agent getAgent() throws Exception {
+        public static Agent getAgent() {
             try {
                 return (Agent) getUser();
             } catch (ClassCastException e) {
@@ -191,7 +193,7 @@ public class AuthService {
         }
 
         // TODO: for payment, transfer, ... etc
-        public static Client getClient() throws Exception {
+        public static Client getClient() throws RuntimeException {
             try {
                 return (Client) getUser();
             } catch (ClassCastException e) {

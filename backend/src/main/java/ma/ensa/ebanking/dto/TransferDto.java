@@ -1,9 +1,6 @@
 package ma.ensa.ebanking.dto;
 
 import lombok.Data;
-import ma.ensa.ebanking.models.CreditCard;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 
 @Data
 public class TransferDto  {

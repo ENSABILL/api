@@ -10,6 +10,9 @@ spring:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+    properties:
+      hibernate:
+        show_sql: true
 
 
 server:
@@ -17,7 +20,7 @@ server:
 
 jwt:
   secret-key: 70655367566B5970347336763979244226452948404D635166546A576D5A7164
-  duration: 60
+  duration: 1440
 
 twilio:
   account-sid: AC2e6a7c5d18e16fead92005b1369f3e58

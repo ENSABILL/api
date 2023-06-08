@@ -14,6 +14,7 @@ import ma.ensa.ebanking.repositories.ClientRepository;
 import ma.ensa.ebanking.repositories.UserRepository;
 import ma.ensa.ebanking.request.UpdateClientRequest;
 import ma.ensa.ebanking.request.UpdatePasswordRequest;
+import ma.ensa.ebanking.services.utils.TwilioOTPService;
 import ma.ensa.ebanking.utils.PasswordUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,20 +42,20 @@ public class ClientService {
         User verifiedBy = null;
         if (verify) {
             if (Auths.checkAdmin()) verifiedBy = Auths.getAdmin();
-            if (Auths.checkAgent()) verifiedBy = Auths.getAgent();
+            else if (Auths.checkAgent()) verifiedBy = Auths.getAgent();
         }
 
         // check the availability of username and email
         if (
                 userRepository.existsByUsername(request.getUsername()) &&
-                        userRepository.existsByEmail(request.getEmail())
+                userRepository.existsByEmail(request.getEmail())
         )
             throw new EmailNotAvailableException();
 
         Client client = Client.builder()
                 .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
-                .CIN(request.getCin())
+                .cin(request.getCin())
                 .dob(request.getDob())
                 .enabled(verify)
                 .firstLogin(true)
@@ -65,6 +66,7 @@ public class ClientService {
                 .verifiedBy(verifiedBy)
                 .build();
 
+        clientRepository.save(client);
         if (verify) {
             String generatedPassword = PasswordUtil.generateRandomPassword(6);
             client.setPassword(passwordEncoder.encode(generatedPassword));
@@ -75,9 +77,6 @@ public class ClientService {
                     .build();
             twilioOTPService.sendInitialPassword(dto);
         }
-
-        clientRepository.save(client);
-
         if (verify) {
             paymentService.createAccount(client, request.getDesiredAccountLimit());
         }
@@ -133,6 +132,11 @@ public class ClientService {
     public List<ClientDto> getAllClients(){
         if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
         return clientRepository.findAll().stream().map(ClientMapper::toDto).collect(Collectors.toList());
+    }
+
+    public List<ClientDto> getNonVerifiedClients(){
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        return clientRepository.findAll().stream().filter(client -> !client.isEnabled()).map(ClientMapper::toDto).collect(Collectors.toList());
     }
 
     public void deleteClient(String id){

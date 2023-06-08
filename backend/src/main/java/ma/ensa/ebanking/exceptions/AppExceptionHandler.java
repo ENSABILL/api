@@ -78,6 +78,7 @@ public class AppExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(Exception.class)
     public String handleOtherException(Exception ex) {
+        ex.printStackTrace();
         return ex.getMessage();
     }
 

@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 public class Operation {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Float amount;

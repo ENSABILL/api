@@ -1,11 +1,9 @@
 package ma.ensa.ebanking.controllers;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
-import ma.ensa.ebanking.dto.auth.UsernameDto;
 import ma.ensa.ebanking.request.UpdateClientRequest;
 import ma.ensa.ebanking.request.UpdatePasswordRequest;
 import ma.ensa.ebanking.services.ClientService;
@@ -43,11 +41,11 @@ public class ClientController {
         return "account registered successfully";
     }
 
-    @GetMapping
+    @GetMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
-    public ClientDto getClient(@RequestBody ClientDto dto) throws Exception{
+    public ClientDto getClient(@PathVariable String username) throws Exception{
         return clientService
-                .getClient(dto.getUsername());
+                .getClient(username);
     }
 
     @GetMapping("/balance")
@@ -78,6 +76,12 @@ public class ClientController {
     @ResponseStatus(HttpStatus.OK)
     public void updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) throws Exception {
         clientService.updatePassword(updatePasswordRequest);
+    }
+
+    @GetMapping("/nonVerifiedClients")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ClientDto> getNonVerifiedClients(){
+        return clientService.getNonVerifiedClients();
     }
 
 

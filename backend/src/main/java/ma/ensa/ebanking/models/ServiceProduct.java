@@ -6,9 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,5 +20,9 @@ public class ServiceProduct {
 
     @ManyToOne
     private Service service;
+
+
+    //@OneToMany(mappedBy = "serviceProduct")
+    //private List<Operation> operations = new ArrayList<>();
 
 }
