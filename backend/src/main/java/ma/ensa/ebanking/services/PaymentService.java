@@ -8,9 +8,7 @@ import ma.ensa.ebanking.enums.AccountLimit;
 import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.enums.RechargeAmount;
 import ma.ensa.ebanking.enums.ServiceType;
-import ma.ensa.ebanking.exceptions.RechargeAmountNotSupportedException;
-import ma.ensa.ebanking.exceptions.RecordNotFoundException;
-import ma.ensa.ebanking.exceptions.ServiceNotCompatibleException;
+import ma.ensa.ebanking.exceptions.*;
 import ma.ensa.ebanking.mapper.OperationMapper;
 import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.CreditCard;
@@ -163,11 +161,11 @@ public class PaymentService {
                 .getAccount();
 
         if (account.getBalance() < amount) {
-            throw new RuntimeException("insufficient balance");
+            throw new InsufficientBalanceException("insufficient balance");
         }
 
         if (account.getAccountLimit().getLimit() < amount) {
-            throw new RuntimeException("""
+            throw new AccountLimitException("""
                     you cannot pass the limit,
                     please upgrade your account
                     """
@@ -195,6 +193,7 @@ public class PaymentService {
     }
 
     public OperationDto payDonation(PayDonationRequest donationRequest) {
+        authService.verifyOtpToken(donationRequest.getToken());
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         ma.ensa.ebanking.models.Service service = serviceRepository.findById(donationRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
