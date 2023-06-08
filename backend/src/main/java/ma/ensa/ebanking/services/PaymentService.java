@@ -221,7 +221,6 @@ public class PaymentService {
 
 
     private OperationDto payRecharge(String serviceId, float amount, String token) {
-        authService.verifyOtpToken(token);
 
         if (!RechargeAmount.checkAmountIsValid(amount)) {
             throw new RechargeAmountNotSupportedException("Recharge amount : " + amount + " not supported");
