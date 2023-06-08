@@ -5,6 +5,7 @@ import ma.ensa.ebanking.dto.AgencyDTO;
 import ma.ensa.ebanking.dto.PaymentServiceDto;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
+import ma.ensa.ebanking.mapper.ServiceMapper;
 import ma.ensa.ebanking.models.Agency;
 import ma.ensa.ebanking.models.CreditCard;
 import ma.ensa.ebanking.models.Service;
@@ -18,6 +19,7 @@ import ma.ensa.ebanking.repositories.ServicePaymentRepository;
 import ma.ensa.ebanking.repositories.ServiceRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 @RequiredArgsConstructor
@@ -84,7 +86,7 @@ public class AgencyService {
                 .immId(agency.getImm())
                 .name(agency.getName())
                 .patentId(agency.getPatentId())
-                .services(agency.getServices())
+                .services(agency.getServices().stream().map(ServiceMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 
@@ -109,7 +111,7 @@ public class AgencyService {
                     .name(a.getName())
                     .patentId(a.getPatentId())
                     .immId(a.getImm())
-                    .services(a.getServices())
+                    .services(a.getServices().stream().map(ServiceMapper::toDto).collect(Collectors.toList()))
                     .build()
             ).toList();
     }

@@ -11,10 +11,7 @@ import ma.ensa.ebanking.enums.RechargeAmount;
 import ma.ensa.ebanking.enums.ServiceType;
 import ma.ensa.ebanking.exceptions.*;
 import ma.ensa.ebanking.mapper.OperationMapper;
-import ma.ensa.ebanking.models.Agency;
-import ma.ensa.ebanking.models.CreditCard;
-import ma.ensa.ebanking.models.Operation;
-import ma.ensa.ebanking.models.PaymentAccount;
+import ma.ensa.ebanking.models.*;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.*;
 import ma.ensa.ebanking.request.PayBillsRequest;
@@ -22,6 +19,7 @@ import ma.ensa.ebanking.request.PayDonationRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -29,7 +27,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
 @Transactional
 public class PaymentService {
@@ -193,20 +191,23 @@ public class PaymentService {
     }
 
     public OperationDto payDonation(PayDonationRequest donationRequest) {
+
         authService.verifyOtpToken(donationRequest.getToken());
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        ma.ensa.ebanking.models.Service service = serviceRepository.findById(donationRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
-        if (!service.getType().equals(ServiceType.DONATION))
+
+        Client client = AuthService.Auths.getClient();
+
+        ma.ensa.ebanking.models.Service service = serviceRepository
+                .findById(donationRequest.getServiceId())
+                .orElseThrow(
+                        () -> new RuntimeException("Service not found")
+                );
+
+        if (service.getType() != ServiceType.DONATION)
             throw new ServiceNotCompatibleException("the service is not a donation service");
 
         Agency agency = service.getAgency();
 
-        try {
-            transfer(agency, donationRequest.getAmount());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        transfer(agency, donationRequest.getAmount());
 
         Operation operation = Operation.builder()
                 .service(service)
@@ -214,14 +215,18 @@ public class PaymentService {
                 .amount(donationRequest.getAmount())
                 .operationStatus(OperationStatus.PAID)
                 .build();
-        //client.getOperations().add(operation);
-        service.getOperations().add(operation);
-        return OperationMapper.toDto(operationRepository.save(operation));
+
+        // client.getOperations().add(operation);
+        // service.getOperations().add(operation);
+
+        return OperationMapper.toDto(
+                operationRepository.save(operation)
+        );
     }
 
 
     private OperationDto payRecharge(String serviceId, float amount, String token) {
-
+        Client client = AuthService.Auths.getClient();
         if (!RechargeAmount.checkAmountIsValid(amount)) {
             throw new RechargeAmountNotSupportedException("Recharge amount : " + amount + " not supported");
         }
@@ -229,8 +234,8 @@ public class PaymentService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         ma.ensa.ebanking.models.Service service = serviceRepository.findById(serviceId).orElseThrow(() -> new RuntimeException("Service not found"));
         if (!service.getType().equals(ServiceType.RECHARGE))
+
             throw new ServiceNotCompatibleException("the service is not a recharge service");
-        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
 
         Agency agency = service.getAgency();
@@ -242,6 +247,7 @@ public class PaymentService {
         }
 
 
+
         Operation operation = Operation.builder()
                 .service(service)
                 .client(client)
@@ -249,7 +255,10 @@ public class PaymentService {
                 .operationStatus(OperationStatus.PAID)
                 .operationTime(LocalDateTime.now())
                 .build();
-        return OperationMapper.toDto(operationRepository.save(operation));
+
+        return OperationMapper.toDto(
+                operationRepository.save(operation)
+        );
     }
 
     public List<OperationDto> payRecharges(PayRechargesRequest payRechargesRequest) {
@@ -258,23 +267,31 @@ public class PaymentService {
     }
 
     private OperationDto payBill(Long operationId) {
-        Operation operation = operationRepository.findByIdAndOperationStatus(operationId, OperationStatus.UNPAID).orElse(null);
+
+        Operation operation = operationRepository
+                .findByIdAndOperationStatus(operationId, OperationStatus.UNPAID)
+                .orElse(null);
+
         if (operation == null) return null;
-        try {
-            transfer(operation.getService().getAgency(), operation.getAmount());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        transfer(operation.getService().getAgency(), operation.getAmount());
 
         operation.setOperationStatus(OperationStatus.PAID);
         operation.setOperationTime(LocalDateTime.now());
 
-        return OperationMapper.toDto(operationRepository.save(operation));
+        return OperationMapper.toDto(
+                operationRepository.save(operation)
+        );
     }
 
     public List<OperationDto> payBills(PayBillsRequest payBillsRequest) {
         authService.verifyOtpToken(payBillsRequest.getToken());
-        return payBillsRequest.getOperationsIds().stream().map(this::payBill).filter(Objects::nonNull).toList();
+        return payBillsRequest
+                .getOperationsIds()
+                .stream()
+                .map(this::payBill)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
 }
