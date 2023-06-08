@@ -16,8 +16,6 @@ import ma.ensa.ebanking.repositories.*;
 import ma.ensa.ebanking.request.PayBillsRequest;
 import ma.ensa.ebanking.request.PayDonationRequest;
 import ma.ensa.ebanking.request.PayRechargeRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
