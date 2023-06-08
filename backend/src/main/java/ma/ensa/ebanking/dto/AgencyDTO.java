@@ -14,5 +14,5 @@ public class AgencyDTO {
     private String patentId;
     private String image;
 
-    private List<Service> services;
+    private List<ServiceDto> services;
 }
