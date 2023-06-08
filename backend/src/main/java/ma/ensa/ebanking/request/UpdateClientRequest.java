@@ -1,6 +1,5 @@
 package ma.ensa.ebanking.request;
 
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

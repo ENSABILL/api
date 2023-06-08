@@ -1,11 +1,9 @@
 package ma.ensa.ebanking.controllers;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.auth.ClientRequest;
-import ma.ensa.ebanking.dto.auth.UsernameDto;
 import ma.ensa.ebanking.request.UpdateClientRequest;
 import ma.ensa.ebanking.request.UpdatePasswordRequest;
 import ma.ensa.ebanking.services.ClientService;

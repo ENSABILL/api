@@ -1,14 +1,15 @@
 package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
+import ma.ensa.ebanking.dto.ClientDto;
 import ma.ensa.ebanking.dto.OrderDto;
 import ma.ensa.ebanking.enums.OrderStatus;
-import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
-import ma.ensa.ebanking.models.PaymentAccount;
 import ma.ensa.ebanking.models.Product;
 import ma.ensa.ebanking.models.ProductOrder;
+import ma.ensa.ebanking.models.user.Admin;
 import ma.ensa.ebanking.models.user.Client;
+import ma.ensa.ebanking.models.user.User;
 import ma.ensa.ebanking.repositories.OrderRepository;
 import ma.ensa.ebanking.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -28,11 +29,12 @@ public class OrderService {
     public List<String> placeOrders(List<OrderDto> dtoList){
 
         Client client = AuthService.Auths.getClient();
-        Product product = null;
+
         double totalAmount = 0;
+
         for(OrderDto dto: dtoList){
 
-            product = productRepository
+            Product product = productRepository
                     .findById(dto.getProductId())
                     .orElseThrow(
                             () -> new RecordNotFoundException("product not found")
@@ -45,14 +47,33 @@ public class OrderService {
             totalAmount += dto.getOrderQte() * product.getPrice();
         }
 
-        paymentService.transfer(
-                product.getAgency(),
-                dto.getOrderQte() * product.getPrice()
-        );
+        paymentService.checkBalanceAndLimit(totalAmount);
 
+        // TODO: need an optimization for the performance
+        return dtoList.stream().map(
+            dto -> {
+                Product product = productRepository
+                        .findById(dto.getProductId())
+                        .orElseThrow(
+                                () -> new RecordNotFoundException("product not found")
+                        );
 
+                paymentService.transfer(
+                        product.getAgency(),
+                        dto.getOrderQte() * product.getPrice()
+                );
 
-        return null;
+                ProductOrder order = ProductOrder.builder()
+                        .client(client)
+                        .product(product)
+                        .qte(dto.getOrderQte())
+                        .build();
+
+                return orderRepository
+                        .save(order)
+                        .getId();
+            }
+        ).toList();
 
     }
 
@@ -115,6 +136,48 @@ public class OrderService {
                 dto.getOrderId(),
                 status
         );
+
+    }
+
+    public List<OrderDto> getAllOrders() {
+
+        AuthService.Auths.getUser();
+
+        List<ProductOrder> orders;
+
+        if(AuthService.Auths.checkAdmin()){
+            orders = orderRepository.findAll();
+        }else if(AuthService.Auths.checkAgent()){
+            orders = orderRepository
+                    .findAllByProduct_Agency(
+                            AuthService.Auths.getAgent().getAgency()
+                    );
+        }else{
+            orders = orderRepository.findAllByClient(
+                    AuthService.Auths.getClient()
+            );
+        }
+
+        return orders
+                .stream()
+                .map(
+                        order -> OrderDto.builder()
+                                .orderId(order.getId())
+                                .orderQte(order.getQte())
+                                .status(order.getOrderStatus().toString())
+                                .productId(order.getProduct().getId())
+                                .client(
+                                        ClientDto.builder()
+                                                .fullName(order.getClient().getFullName())
+                                                .username(order.getClient().getUsername())
+                                                .phoneNumber(order.getClient().getPhoneNumber())
+                                                .build()
+                                )
+                                .build()
+                ).toList();
+
+
+
 
     }
 }

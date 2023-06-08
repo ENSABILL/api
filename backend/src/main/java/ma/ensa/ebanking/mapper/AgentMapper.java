@@ -1,7 +1,6 @@
 package ma.ensa.ebanking.mapper;
 
 import ma.ensa.ebanking.dto.AgentDto;
-
 import ma.ensa.ebanking.models.user.Agent;
 
 public class AgentMapper {

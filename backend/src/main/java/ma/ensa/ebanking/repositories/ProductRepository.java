@@ -12,6 +12,7 @@ import java.util.List;
 @Transactional
 public interface ProductRepository extends JpaRepository<Product, String> {
 
+
     List<Product> findAllByAgency_Imm(String imm);
 
     @Modifying

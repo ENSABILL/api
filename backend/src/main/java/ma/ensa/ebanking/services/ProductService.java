@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.ProductDto;
 import ma.ensa.ebanking.exceptions.PermissionException;
 import ma.ensa.ebanking.exceptions.RecordNotFoundException;
-import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.Product;
+import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 

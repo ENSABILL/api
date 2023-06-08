@@ -2,7 +2,6 @@ package ma.ensa.ebanking.controllers;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.OrderDto;
-import ma.ensa.ebanking.enums.OrderStatus;
 import ma.ensa.ebanking.services.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +18,16 @@ public class OrderController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getAllOrders(){
-        // TODO; implement this shit
-        return null;
+
+
+        return service.getAllOrders();
+
+    }
+
+    @PostMapping("/all")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<String> placeOrders(@RequestBody List<OrderDto> dtoList){
+        return service.placeOrders(dtoList);
     }
 
     @PostMapping

@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.models.user.Client;
-import ma.ensa.ebanking.services.ProductService;
 
 import java.time.LocalDateTime;
 

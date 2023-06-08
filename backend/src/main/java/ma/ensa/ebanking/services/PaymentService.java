@@ -155,7 +155,8 @@ public class PaymentService {
         );
     }
 
-    public void transfer(Agency agency, double amount) {
+
+    public void checkBalanceAndLimit(double amount){
 
         PaymentAccount account = AuthService.Auths
                 .getClient()
@@ -172,6 +173,16 @@ public class PaymentService {
                     """
             );
         }
+
+    }
+
+    public void transfer(Agency agency, double amount) {
+
+        PaymentAccount account = AuthService.Auths
+                .getClient()
+                .getAccount();
+
+        checkBalanceAndLimit(amount);
 
         creditCardRepository.incrAmount(
                 agency.getCreditCard().getCreditCardNumber()

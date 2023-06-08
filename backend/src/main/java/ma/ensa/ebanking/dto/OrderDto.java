@@ -1,9 +1,10 @@
 package ma.ensa.ebanking.dto;
 
+import lombok.Builder;
 import lombok.Data;
-import ma.ensa.ebanking.enums.OrderStatus;
 
 @Data
+@Builder
 public class OrderDto {
 
     private String orderId;
@@ -13,5 +14,7 @@ public class OrderDto {
     private int orderQte;
 
     private String status;
+
+    private ClientDto client;
 
 }
