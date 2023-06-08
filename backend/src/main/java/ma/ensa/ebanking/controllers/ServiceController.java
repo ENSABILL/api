@@ -24,7 +24,7 @@ public class ServiceController {
         return servicesService.getAllServices(keyword, type);
     }
 
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     public ServiceDto getService(@PathVariable("id") String serviceId){
         return servicesService.getService(serviceId);
     }

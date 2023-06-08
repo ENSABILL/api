@@ -80,4 +80,15 @@ public class AppExceptionHandler {
     public String handleOtherException(Exception ex) {
         return ex.getMessage();
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public String handleInsufficientBalanceException(InsufficientBalanceException ex){
+        return ex.getMessage();
+    }
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccountLimitException.class)
+    public String handleAccountLimitException(AccountLimitException ex){
+        return ex.getMessage();
+    }
 }
