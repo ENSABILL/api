@@ -2,6 +2,7 @@ package ma.ensa.ebanking.controllers;
 
 import lombok.AllArgsConstructor;
 import ma.ensa.ebanking.dto.OperationDto;
+import ma.ensa.ebanking.dto.PayRechargesRequest;
 import ma.ensa.ebanking.request.AddFactureRequest;
 import ma.ensa.ebanking.request.PayBillsRequest;
 import ma.ensa.ebanking.request.PayDonationRequest;
@@ -49,8 +50,8 @@ public class OperationController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/pay-recharge")
-    public OperationDto payRecharge(@RequestBody PayRechargeRequest rechargeRequest) {
-        return paymentService.payRecharge((rechargeRequest));
+    public List<OperationDto> payRecharge(@RequestBody PayRechargesRequest rechargesRequest) {
+        return paymentService.payRecharges(rechargesRequest);
     }
 
     @ResponseStatus(HttpStatus.OK)

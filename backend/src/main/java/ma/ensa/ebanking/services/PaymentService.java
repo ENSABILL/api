@@ -2,6 +2,7 @@ package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.OperationDto;
+import ma.ensa.ebanking.dto.PayRechargesRequest;
 import ma.ensa.ebanking.dto.TransferDto;
 import ma.ensa.ebanking.dto.TransferInternalDto;
 import ma.ensa.ebanking.enums.AccountLimit;
@@ -15,7 +16,10 @@ import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.*;
 import ma.ensa.ebanking.request.PayBillsRequest;
 import ma.ensa.ebanking.request.PayDonationRequest;
-import ma.ensa.ebanking.request.PayRechargeRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -148,7 +152,7 @@ public class PaymentService {
     }
 
 
-    public void checkBalanceAndLimit(double amount){
+    public void checkBalanceAndLimit(double amount) {
 
         PaymentAccount account = AuthService.Auths
                 .getClient()
@@ -192,7 +196,7 @@ public class PaymentService {
 
         Client client = AuthService.Auths.getClient();
 
-        Service service = serviceRepository
+        ma.ensa.ebanking.models.Service service = serviceRepository
                 .findById(donationRequest.getServiceId())
                 .orElseThrow(
                         () -> new RuntimeException("Service not found")
@@ -221,39 +225,33 @@ public class PaymentService {
     }
 
 
-    public OperationDto payRecharge(PayRechargeRequest rechargeRequest) {
-
+    private OperationDto payRecharge(String serviceId, float amount, String token) {
         Client client = AuthService.Auths.getClient();
-
-        authService.verifyOtpToken(rechargeRequest.getToken());
-
-        if (!RechargeAmount.checkAmountIsValid(rechargeRequest.getAmount())) {
-            throw new RechargeAmountNotSupportedException(
-                    String.format(
-                            "Recharge amount : %s not supported",
-                            rechargeRequest.getAmount()
-                    )
-            );
+        if (!RechargeAmount.checkAmountIsValid(amount)) {
+            throw new RechargeAmountNotSupportedException("Recharge amount : " + amount + " not supported");
         }
 
-        Service service = serviceRepository
-                .findById(rechargeRequest.getServiceId())
-                .orElseThrow(
-                        () -> new RecordNotFoundException("Service not found")
-                );
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        ma.ensa.ebanking.models.Service service = serviceRepository.findById(serviceId).orElseThrow(() -> new RuntimeException("Service not found"));
+        if (!service.getType().equals(ServiceType.RECHARGE))
 
-        if (service.getType() != ServiceType.RECHARGE)
             throw new ServiceNotCompatibleException("the service is not a recharge service");
 
 
         Agency agency = service.getAgency();
 
-        transfer(agency, rechargeRequest.getAmount());
+        try {
+            transfer(agency, amount);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
 
         Operation operation = Operation.builder()
                 .service(service)
                 .client(client)
-                .amount(rechargeRequest.getAmount())
+                .amount(amount)
                 .operationStatus(OperationStatus.PAID)
                 .operationTime(LocalDateTime.now())
                 .build();
@@ -261,6 +259,11 @@ public class PaymentService {
         return OperationMapper.toDto(
                 operationRepository.save(operation)
         );
+    }
+
+    public List<OperationDto> payRecharges(PayRechargesRequest payRechargesRequest) {
+        authService.verifyOtpToken(payRechargesRequest.getToken());
+        return payRechargesRequest.getAmounts().stream().map(amount -> payRecharge(payRechargesRequest.getServiceId(), amount, payRechargesRequest.getToken())).filter(Objects::nonNull).toList();
     }
 
     private OperationDto payBill(Long operationId) {
