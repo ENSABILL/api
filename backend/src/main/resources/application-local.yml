@@ -20,5 +20,5 @@ jwt:
 
 twilio:
     account-sid: AC2e6a7c5d18e16fead92005b1369f3e58
-    auth-token: 94ad0fb26c5e61ec1dd9244de5b351f4
+    auth-token: cc4fe1119de14cbd97b894521564f7ac
     trial-phone-number: +12543303862

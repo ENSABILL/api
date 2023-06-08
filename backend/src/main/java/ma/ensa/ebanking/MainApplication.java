@@ -42,7 +42,7 @@ public class MainApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args){
 
         TomcatServletWebServerFactory a=new TomcatServletWebServerFactory();
 
@@ -72,6 +72,7 @@ public class MainApplication implements CommandLineRunner {
                     CreditCard.builder().build()
             );
         }
+
 
     }
 }
