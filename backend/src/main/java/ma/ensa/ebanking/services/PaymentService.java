@@ -2,6 +2,7 @@ package ma.ensa.ebanking.services;
 
 import lombok.RequiredArgsConstructor;
 import ma.ensa.ebanking.dto.OperationDto;
+import ma.ensa.ebanking.dto.PayRechargesRequest;
 import ma.ensa.ebanking.dto.TransferDto;
 import ma.ensa.ebanking.dto.TransferInternalDto;
 import ma.ensa.ebanking.enums.AccountLimit;
@@ -18,7 +19,6 @@ import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.*;
 import ma.ensa.ebanking.request.PayBillsRequest;
 import ma.ensa.ebanking.request.PayDonationRequest;
-import ma.ensa.ebanking.request.PayRechargeRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -154,7 +154,7 @@ public class PaymentService {
     }
 
 
-    public void checkBalanceAndLimit(double amount){
+    public void checkBalanceAndLimit(double amount) {
 
         PaymentAccount account = AuthService.Auths
                 .getClient()
@@ -220,15 +220,15 @@ public class PaymentService {
     }
 
 
-    public OperationDto payRecharge(PayRechargeRequest rechargeRequest) {
-        authService.verifyOtpToken(rechargeRequest.getToken());
+    private OperationDto payRecharge(String serviceId, float amount, String token) {
+        authService.verifyOtpToken(token);
 
-        if (!RechargeAmount.checkAmountIsValid(rechargeRequest.getAmount())) {
-            throw new RechargeAmountNotSupportedException("Recharge amount : " + rechargeRequest.getAmount() + " not supported");
+        if (!RechargeAmount.checkAmountIsValid(amount)) {
+            throw new RechargeAmountNotSupportedException("Recharge amount : " + amount + " not supported");
         }
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        ma.ensa.ebanking.models.Service service = serviceRepository.findById(rechargeRequest.getServiceId()).orElseThrow(() -> new RuntimeException("Service not found"));
+        ma.ensa.ebanking.models.Service service = serviceRepository.findById(serviceId).orElseThrow(() -> new RuntimeException("Service not found"));
         if (!service.getType().equals(ServiceType.RECHARGE))
             throw new ServiceNotCompatibleException("the service is not a recharge service");
         Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
@@ -237,7 +237,7 @@ public class PaymentService {
         Agency agency = service.getAgency();
 
         try {
-            transfer(agency, rechargeRequest.getAmount());
+            transfer(agency, amount);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -246,11 +246,16 @@ public class PaymentService {
         Operation operation = Operation.builder()
                 .service(service)
                 .client(client)
-                .amount(rechargeRequest.getAmount())
+                .amount(amount)
                 .operationStatus(OperationStatus.PAID)
                 .operationTime(LocalDateTime.now())
                 .build();
         return OperationMapper.toDto(operationRepository.save(operation));
+    }
+
+    public List<OperationDto> payRecharges(PayRechargesRequest payRechargesRequest) {
+        authService.verifyOtpToken(payRechargesRequest.getToken());
+        return payRechargesRequest.getAmounts().stream().map(amount -> payRecharge(payRechargesRequest.getServiceId(), amount, payRechargesRequest.getToken())).filter(Objects::nonNull).toList();
     }
 
     private OperationDto payBill(Long operationId) {
