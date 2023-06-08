@@ -274,6 +274,7 @@ public class PaymentService {
         transfer(operation.getService().getAgency(), operation.getAmount());
 
         operation.setOperationStatus(OperationStatus.PAID);
+        operation.setOperationTime(LocalDateTime.now());
 
         return OperationMapper.toDto(
                 operationRepository.save(operation)

@@ -35,7 +35,6 @@ public class Operation {
 
     private OperationStatus operationStatus;
 
-    @UpdateTimestamp
     @CreationTimestamp
     private LocalDateTime operationTime;
 
