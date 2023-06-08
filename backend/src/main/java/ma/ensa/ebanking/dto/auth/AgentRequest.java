@@ -13,5 +13,6 @@ public class AgentRequest {
     private String email;
 
     private String phoneNumber;
+
     private String agencyImmId;
 }

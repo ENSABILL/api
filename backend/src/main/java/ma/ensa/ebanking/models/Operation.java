@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import ma.ensa.ebanking.enums.OperationStatus;
 import ma.ensa.ebanking.models.user.Client;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -34,6 +35,7 @@ public class Operation {
 
     private OperationStatus operationStatus;
 
+    @UpdateTimestamp
     @CreationTimestamp
     private LocalDateTime operationTime;
 
