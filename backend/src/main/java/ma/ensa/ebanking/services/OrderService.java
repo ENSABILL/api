@@ -13,6 +13,8 @@ import ma.ensa.ebanking.repositories.OrderRepository;
 import ma.ensa.ebanking.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -22,6 +24,37 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     private final PaymentService paymentService;
+
+    public List<String> placeOrders(List<OrderDto> dtoList){
+
+        Client client = AuthService.Auths.getClient();
+        Product product = null;
+        double totalAmount = 0;
+        for(OrderDto dto: dtoList){
+
+            product = productRepository
+                    .findById(dto.getProductId())
+                    .orElseThrow(
+                            () -> new RecordNotFoundException("product not found")
+                    );
+
+            if(product.getQte() < dto.getOrderQte()){
+                throw new RuntimeException("out of stock");
+            }
+
+            totalAmount += dto.getOrderQte() * product.getPrice();
+        }
+
+        paymentService.transfer(
+                product.getAgency(),
+                dto.getOrderQte() * product.getPrice()
+        );
+
+
+
+        return null;
+
+    }
 
     public String placeOrder(OrderDto dto){
 
