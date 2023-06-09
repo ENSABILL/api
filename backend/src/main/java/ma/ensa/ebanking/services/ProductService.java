@@ -34,6 +34,8 @@ public class ProductService {
                               .id(product.getId())
                               .name(product.getName())
                               .price(product.getPrice())
+                              .imageUrl(product.getImageUrl())
+                              .description(product.getDescription())
                               .agencyName(product.getAgency().getName())
                               .qte(product.getQte())
                               .build()
@@ -92,6 +94,8 @@ public class ProductService {
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
+                .imageUrl(product.getImageUrl())
+                .description(product.getDescription())
                 .agencyName(product.getAgency().getName())
                 .qte(product.getQte())
                 .build();
