@@ -89,7 +89,7 @@ public class OperationService {
                 .map(
                         operation -> {
                             if(operation.getService() != null)
-                                operation.setService(new ma.ensa.ebanking.models.Service(()));
+                                operation.setService(new ma.ensa.ebanking.models.Service());
                         }
                 )
                 .map(OperationMapper::toDto)
