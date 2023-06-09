@@ -11,7 +11,6 @@ import ma.ensa.ebanking.models.user.Agent;
 import ma.ensa.ebanking.models.user.Client;
 import ma.ensa.ebanking.repositories.*;
 import ma.ensa.ebanking.request.AddFactureRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -88,8 +87,12 @@ public class OperationService {
                 )
                 .map(
                         operation -> {
-                            if(operation.getService() == null)
+
+                            if(operation.getService() == null){
+
                                 operation.setService(new ma.ensa.ebanking.models.Service());
+                            }
+                            return operation;
                         }
                 )
                 .map(OperationMapper::toDto)
