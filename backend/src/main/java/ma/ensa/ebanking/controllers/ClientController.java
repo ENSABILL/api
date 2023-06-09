@@ -84,5 +84,10 @@ public class ClientController {
         return clientService.getNonVerifiedClients();
     }
 
+    @GetMapping("/profile")
+    @ResponseStatus(HttpStatus.OK)
+    public ClientDto getAuthClient(){
+        return clientService.getAuthClient();
+    }
 
 }

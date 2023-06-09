@@ -124,6 +124,11 @@ public class ClientService {
         return clientDto;
     }
 
+    public ClientDto getAuthClient(){
+        Client client = AuthService.Auths.getClient();
+        return ClientMapper.toDto(client);
+    }
+
     public double checkBalance() throws Exception {
         Client client = AuthService.Auths.getClient();
         return client.getAccount().getBalance();
