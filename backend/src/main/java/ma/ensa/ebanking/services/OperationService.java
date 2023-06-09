@@ -88,7 +88,7 @@ public class OperationService {
                 )
                 .map(
                         operation -> {
-                            if(operation.getService() != null)
+                            if(operation.getService() == null)
                                 operation.setService(new ma.ensa.ebanking.models.Service());
                         }
                 )
