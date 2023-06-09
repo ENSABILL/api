@@ -63,9 +63,15 @@ public class OperationService {
 
 
     public List<OperationDto> getClientUnpaidBills(String serviceId) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        Stream<Operation> unpaidBills = client.getOperations().stream().filter(operation -> operation.getOperationStatus().equals(OperationStatus.UNPAID));
+
+        Client client = AuthService.Auths.getClient();
+
+        Stream<Operation> unpaidBills = client
+                .getOperations()
+                .stream()
+                .filter(
+                        operation -> operation.getOperationStatus().equals(OperationStatus.UNPAID)
+                );
         if (serviceId != null) {
             unpaidBills = unpaidBills.filter(operation -> operation.getService().getId().equals(serviceId));
         }
@@ -80,8 +86,11 @@ public class OperationService {
                 .filter(
                         operation -> operation.getOperationStatus() == OperationStatus.PAID
                 )
-                .filter(
-                        operation -> operation.getService() != null
+                .map(
+                        operation -> {
+                            if(operation.getService() != null)
+                                operation.setService(new ma.ensa.ebanking.models.Service(()));
+                        }
                 )
                 .map(OperationMapper::toDto)
                 .toList();
