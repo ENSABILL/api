@@ -37,13 +37,13 @@ public class AgencyService {
 
     // ------------ agency CRUD ------------
 
-    public void addAgency(AgencyDTO dto) throws Exception{
+    public void addAgency(AgencyDTO dto) throws Exception {
 
         // the admin is the only one who has this permission
-        if(!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
 
         // check if the imm is not exist in the repo
-        if(agencyRepository.existsById(dto.getImmId())){
+        if (agencyRepository.existsById(dto.getImmId())) {
             throw new Exception();
         }
 
@@ -66,11 +66,11 @@ public class AgencyService {
         agencyRepository.save(agency);
     }
 
-    public AgencyDTO getAgency(String imm) throws Exception{
+    public AgencyDTO getAgency(String imm) throws Exception {
         // check auth
         User user = AuthService.Auths.getUser();
 
-        if(user instanceof Agent){
+        if (user instanceof Agent) {
             throw new PermissionException();
         }
 
@@ -78,7 +78,7 @@ public class AgencyService {
                 () -> new RecordNotFoundException("agency not found")
         );
 
-        if(user instanceof Client){
+        if (user instanceof Client) {
             agency.showActiveServicesOnly();
         }
 
@@ -86,34 +86,36 @@ public class AgencyService {
                 .immId(agency.getImm())
                 .name(agency.getName())
                 .patentId(agency.getPatentId())
+                .image(agency.getImage())
                 .services(agency.getServices().stream().map(ServiceMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 
-    public List<AgencyDTO> getAllAgencies() throws Exception{
+    public List<AgencyDTO> getAllAgencies() throws Exception {
         // check auth
         User user = AuthService.Auths.getUser();
 
-        if(user instanceof Agent){
+        if (user instanceof Agent) {
             throw new PermissionException();
         }
 
         List<Agency> agencies = agencyRepository.findAll();
 
-        if(user instanceof Client){
+        if (user instanceof Client) {
             agencies.forEach(Agency::showActiveServicesOnly);
         }
 
         return agencies
-            .stream()
-            .map(
-                a -> AgencyDTO.builder()
-                    .name(a.getName())
-                    .patentId(a.getPatentId())
-                    .immId(a.getImm())
-                    .services(a.getServices().stream().map(ServiceMapper::toDto).collect(Collectors.toList()))
-                    .build()
-            ).toList();
+                .stream()
+                .map(
+                        a -> AgencyDTO.builder()
+                                .name(a.getName())
+                                .patentId(a.getPatentId())
+                                .immId(a.getImm())
+                                .image(a.getImage())
+                                .services(a.getServices().stream().map(ServiceMapper::toDto).collect(Collectors.toList()))
+                                .build()
+                ).toList();
     }
 
     // ------------ payment service CRUD ------------
@@ -148,9 +150,9 @@ public class AgencyService {
 
     }
 
-    public void deleteAgency(String id){
-        if(!AuthService.Auths.checkAdmin()) throw new PermissionException();
-        agencyRepository.findById(id).orElseThrow(()->new RecordNotFoundException("Agency not found"));
+    public void deleteAgency(String id) {
+        if (!AuthService.Auths.checkAdmin()) throw new PermissionException();
+        agencyRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Agency not found"));
         agencyRepository.deleteById(id);
     }
 
