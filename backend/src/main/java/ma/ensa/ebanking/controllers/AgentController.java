@@ -29,9 +29,9 @@ public class AgentController {
         return service.getAllAgents();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteAgent(@RequestBody String id){
+    public void deleteAgent(@PathVariable String id){
         service.deleteAgent(id);
     }
 

@@ -60,9 +60,9 @@ public class ClientController {
         return clientService.getAllClients();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteClients(@RequestBody String id){
+    public void deleteClient(@PathVariable String id){
         clientService.deleteClient(id);
     }
 

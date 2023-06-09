@@ -68,9 +68,9 @@ public class AgencyController {
         return "transferred successfully";
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteAgency(@RequestBody String id){
+    public void deleteAgency(@PathVariable String id){
         service.deleteAgency(id);
     }
 
