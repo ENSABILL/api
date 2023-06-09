@@ -73,8 +73,17 @@ public class OperationService {
     }
 
     public List<OperationDto> getClientPaidBills() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Client client = (Client) userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        return client.getOperations().stream().filter(operation -> operation.getOperationStatus().equals(OperationStatus.PAID)).map(OperationMapper::toDto).collect(Collectors.toList());
+        Client client = AuthService.Auths.getClient();
+        return client
+                .getOperations()
+                .stream()
+                .filter(
+                        operation -> operation.getOperationStatus() == OperationStatus.PAID
+                )
+                .filter(
+                        operation -> operation.getService() != null
+                )
+                .map(OperationMapper::toDto)
+                .toList();
     }
 }
